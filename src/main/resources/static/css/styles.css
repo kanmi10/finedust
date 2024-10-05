@@ -10843,8 +10843,8 @@ header.masthead {
   background-color: #343a40;
   background: url("../assets/img/dust_main.png") no-repeat center center;
   background-size: cover;
-  padding-top: 8rem;
-  padding-bottom: 8rem;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
 }
 header.masthead:before {
   content: "";

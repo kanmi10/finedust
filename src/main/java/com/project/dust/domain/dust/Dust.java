@@ -1,11 +1,11 @@
-package com.project.dust.domain;
+package com.project.dust.domain.dust;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class DustDTO {
+public class Dust {
 
     private String sidoName;    //시도명
     private String stationName; //측정소명

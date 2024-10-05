@@ -35,23 +35,17 @@
                         <div class="text-center text-white">
                             <!-- Page heading-->
                             <h1 class="mb-5">미세먼지 수치를 알아보세요!</h1>
-                            <!-- Signup form-->
-                            <!-- * * * * * * * * * * * * * * *-->
-                            <!-- * * SB Forms Contact Form * *-->
-                            <!-- * * * * * * * * * * * * * * *-->
-                            <!-- This form ris pre-integrated with SB Forms.-->
-                            <!-- To make this form functional, sign up at-->
-                            <!-- https://startbootstrap.com/solution/contact-forms-->
-                            <!-- to get an API token!-->
-                            <form class="form-subscribe" id="contactForm" data-sb-form-api-token="API_TOKEN">
-                                <!-- Email address input-->
+                            <form class="form-subscribe mb-5" id="contactForm" method="GET" action="/dust">
+                                <!-- search input-->
                                 <div class="row">
                                     <div class="col">
-                                        <input class="form-control form-control-lg" id="emailAddress" placeholder="지역명 검색.." data-sb-validations="required,email" />
-                                        <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:required">Email Address is required.</div>
-                                        <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:email">Email Address Email is not valid.</div>
+                                        <input class="form-control form-control-lg" id="search-input" placeholder="지역명 검색.." name="sidoName"/>
                                     </div>
-                                    <div class="col-auto"><button class="btn btn-primary btn-lg" id="submitButton" type="submit" href="/">검색</button></div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary btn-lg" id="submitButton" type="submit" >
+                                            검색
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- Submit success message-->
                                 <!---->
@@ -70,16 +64,14 @@
                                 <!-- an error submitting the form-->
                                 <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
                             </form>
+
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </header>
-        <!-- Icons Grid-->
-
-        <!-- Image Showcases-->
-
-        <!-- Call to Action-->
 
         <!-- Footer-->
         <footer class="footer bg-light">
