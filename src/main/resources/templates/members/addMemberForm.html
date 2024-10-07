@@ -5,7 +5,7 @@
     <meta name="author" content="Muhamad Nauval Azhar">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="This is a login page template based on Bootstrap 5">
-    <title>Bootstrap 5 Login Page</title>
+    <title>오늘미세어때?</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 </head>
 
@@ -23,28 +23,24 @@
                         <form th:object="${member}" method="POST" class="needs-validation" novalidate="" autocomplete="off" >
                             <div class="mb-3">
                                 <input th:field="*{name}" type="text" class="form-control" required autofocus th:placeholder="#{label.name}">
-                                <div class="invalid-feedback" >
+                                <div th:class="alert-danger" th:errors="*{name}" >
                                     Name is required
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <input th:field="*{loginId}" class="form-control" required th:placeholder="#{label.id}">
-                                <div class="invalid-feedback">
+                                <div th:class="alert-danger" th:errors="*{loginId}">
                                     ID is invalid
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <input th:field="*{password}" type="password" class="form-control" required th:placeholder="#{label.password}">
-                                <div class="invalid-feedback">
+                                <div th:class="alert-danger" th:errors="*{password}">
                                     Password is required
                                 </div>
                             </div>
-
-                            <p class="form-text text-muted mb-3">
-                                By registering you agree with our terms and condition.
-                            </p>
 
                             <div class="align-items-center d-flex">
                                 <button type="submit" class="btn btn-primary ms-auto" th:text="#{label.signup}">
