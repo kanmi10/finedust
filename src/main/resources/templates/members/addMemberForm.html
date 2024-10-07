@@ -19,27 +19,24 @@
                 </div>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
-                        <h1 class="fs-4 card-title fw-bold mb-4">Register</h1>
-                        <form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+                        <h1 class="fs-4 card-title fw-bold mb-4" th:text="#{label.signup}">회원가입</h1>
+                        <form th:object="${member}" method="POST" class="needs-validation" novalidate="" autocomplete="off" >
                             <div class="mb-3">
-                                <label class="mb-2 text-muted" for="name">Name</label>
-                                <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
-                                <div class="invalid-feedback">
+                                <input th:field="*{name}" type="text" class="form-control" required autofocus th:placeholder="#{label.name}">
+                                <div class="invalid-feedback" >
                                     Name is required
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label class="mb-2 text-muted" for="email">E-Mail Address</label>
-                                <input id="email" type="email" class="form-control" name="email" value="" required>
+                                <input th:field="*{loginId}" class="form-control" required th:placeholder="#{label.id}">
                                 <div class="invalid-feedback">
-                                    Email is invalid
+                                    ID is invalid
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label class="mb-2 text-muted" for="password">Password</label>
-                                <input id="password" type="password" class="form-control" name="password" required>
+                                <input th:field="*{password}" type="password" class="form-control" required th:placeholder="#{label.password}">
                                 <div class="invalid-feedback">
                                     Password is required
                                 </div>
@@ -50,15 +47,15 @@
                             </p>
 
                             <div class="align-items-center d-flex">
-                                <button type="submit" class="btn btn-primary ms-auto">
-                                    Register
+                                <button type="submit" class="btn btn-primary ms-auto" th:text="#{label.signup}">
+                                    회원가입
                                 </button>
                             </div>
                         </form>
                     </div>
                     <div class="card-footer py-3 border-0">
                         <div class="text-center">
-                            Already have an account? <a href="../main.html" class="text-dark">Login</a>
+                            이미 계정이 있으신가요? <a href="../main.html" class="text-dark" th:text="#{label.login}" th:href="@{/login}">Login</a>
                         </div>
                     </div>
                 </div>

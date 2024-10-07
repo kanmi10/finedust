@@ -19,11 +19,11 @@
                 </div>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
-                        <h1 class="fs-4 card-title fw-bold mb-4">Login</h1>
+                        <h1 class="fs-4 card-title fw-bold mb-4" th:text="#{label.login}">Login</h1>
                         <form method="POST" class="needs-validation" novalidate="" autocomplete="off">
                             <div class="mb-3">
-                                <label class="mb-2 text-muted" for="email">E-Mail Address</label>
-                                <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
+<!--                                <label class="mb-2 text-muted" for="email" th:text="#{label.id}">E-Mail Address</label>-->
+                                <input id="email" type="email" class="form-control" name="email" value="" required autofocus th:placeholder="#{label.id}">
                                 <div class="invalid-feedback">
                                     Email is invalid
                                 </div>
@@ -31,12 +31,12 @@
 
                             <div class="mb-3">
                                 <div class="mb-2 w-100">
-                                    <label class="text-muted" for="password">Password</label>
+<!--                                    <label class="text-muted" for="password" th:text="#{label.password}">Password</label>-->
                                     <a href="forgot.html" class="float-end">
                                         Forgot Password?
                                     </a>
                                 </div>
-                                <input id="password" type="password" class="form-control" name="password" required>
+                                <input id="password" type="password" class="form-control" name="password" required th:placeholder="#{label.password}">
                                 <div class="invalid-feedback">
                                     Password is required
                                 </div>
@@ -47,7 +47,7 @@
                                     <input type="checkbox" name="remember" id="remember" class="form-check-input">
                                     <label for="remember" class="form-check-label">Remember Me</label>
                                 </div>
-                                <button type="submit" class="btn btn-primary ms-auto">
+                                <button type="submit" class="btn btn-primary ms-auto" th:text="#{label.login}">
                                     Login
                                 </button>
                             </div>
@@ -55,7 +55,7 @@
                     </div>
                     <div class="card-footer py-3 border-0">
                         <div class="text-center">
-                            Don't have an account? <a href="register.html" class="text-dark">Create One</a>
+                            계정이 없으신가요? <a href="addMemberForm.html" th:href="@{/members/add}" class="text-dark" th:text="#{label.signup}">Create One</a>
                         </div>
                     </div>
                 </div>
