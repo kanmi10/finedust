@@ -22,7 +22,6 @@ public class MemberController {
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("member") Member member) {
-        //TODO 에러 메세지 별 부트스트랩 박스 색깔 추가
         return "members/addMemberForm";
     }
 
