@@ -74,8 +74,6 @@ public class DustController {
 
         dustService.init(sb.toString());
 
-
-        //TODO 모달 부트스트랩 js 추가하기, 블로그 읽고 프론트 다시짜기
         model.addAttribute("dustArr", MemoryDustRepository.dustDTOArr);
 
         return "dust/list";

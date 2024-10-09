@@ -16,12 +16,5 @@ public class MemoryDustRepository implements DustRepository {
         return dust;
     }
 
-    public void clear() {
-        dustDTOArr.clear();
-    }
-
-    public List<Dust> show() {
-        return dustDTOArr;
-    }
 
 }
