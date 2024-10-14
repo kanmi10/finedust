@@ -16,64 +16,77 @@
           type="text/css"/>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/4add07bfb4.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- 상단 -->
-<nav class="navbar navbar-light bg-light static-top">
-    <div class="container">
-        <a class="navbar-brand" href="#!">오늘미세어때?</a>
-        <div>
-            <a class="btn btn-outline-primary me-2" href="#login" th:href="@{/login}">로그인</a>
-            <a class="btn btn-outline-primary" href="#signup" th:href="@{/members/add}">회원가입</a>
+<nav class="navbar bg-white bg-light static-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <!-- 로고 및 검색 폼 -->
+        <div class="d-flex">
+            <a class="navbar-brand" href="#!" th:href="@{/}">
+                <img class="align-items-center me-3" style="width: 120px; height: 50px;"
+                     src="/assets/img/today_dust_logo.png" alt="미세먼지 로고">
+            </a>
+            <form class="d-flex align-items-center">
+                <div class="input-group">
+                    <input class="form-control" style="width: 500px" type="search" placeholder="지역명 또는 측정소명을 검색해보세요!">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> <!-- Font Awesome 돋보기 아이콘 -->
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- 로그인 및 회원가입 -->
+        <div class="d-flex">
+            <a class="btn btn-outline-primary me-2 align-items-center" href="#login" th:href="@{/login}">로그인</a>
+            <a class="btn btn-outline-primary align-items-center" href="#signup" th:href="@{/members/add}">회원가입</a>
         </div>
     </div>
 </nav>
 
 <!-- Masthead-->
-<header class="masthead">
+<header class="masthead" style="padding-bottom: 5rem; padding-top: 5rem;">
     <div class="container position-relative">
-        <div class="row justify-content-center">
-            <div class="col-xl-6">
-                <div class="text-center text-white">
-                    <!-- Page heading-->
-                    <h1 class="mb-5">미세먼지 수치를 알아보세요!</h1>
-                    <form class="form-subscribe mb-5" id="contactForm" method="GET" action="/dust">
 
-                        <!-- search input-->
-                        <div class="row">
-                            <div class="col">
-                                <input class="form-control form-control-lg" id="search-input" placeholder="지역명 검색.."
-                                       name="userSidoName"/>
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-primary btn-lg" id="submitButton" type="submit">
-                                    검색
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Submit success message-->
-                        <!---->
-                        <!-- This is what your users will see when the form-->
-                        <!-- has successfully submitted-->
-                        <div class="d-none" id="submitSuccessMessage">
-                            <div class="text-center mb-3">
-                                <div class="fw-bolder">Form submission successful!</div>
-                                <p>To activate this form, sign up at</p>
-                                <a class="text-white" href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
-                            </div>
-                        </div>
-                        <!-- Submit error message-->
-                        <!---->
-                        <!-- This is what your users will see when there is-->
-                        <!-- an error submitting the form-->
-                        <div class="d-none" id="submitErrorMessage">
-                            <div class="text-center text-danger mb-3">Error sending message!</div>
-                        </div>
-                    </form>
+        <!-- 검색 지역 정보 -->
+        <span class="d-flex align-items-center">
+            <i class="text-danger fa-solid fa-location-crosshairs" style="font-size: 2rem;"></i>
+            <h3 class="text-light ms-2">수지구 풍덕천1동</h3>
+        </span>
+        <h6 class="text-light mb-4 ms-5">2024-10-14 03:25 PM</h6>
 
+        <!-- 대기오염 카드 -->
+        <div class="d-flex justify-content-evenly">
+            <div class="card w-25 text-bg-primary">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <h4>미세먼지</h4>
+                    <i class="fa-solid fa-face-laugh-squint mb-4" style="font-size: 100px"></i>
+                    <h2 class="card-text">좋음</h2>
+                    <p class="card-text">18㎍/㎥</p>
+                    <p class="card-text">신선한 공기 많이 마시세요~</p>
                 </div>
-
+            </div>
+            <div class="card w-25 text-bg-primary">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <h4>초미세먼지</h4>
+                    <i class="fa-solid fa-face-laugh-squint mb-4" style="font-size: 100px"></i>
+                    <h2 class="card-text">좋음</h2>
+                    <p class="card-text">9㎍/㎥</p>
+                    <p class="card-text">신선한 공기 많이 마시세요~</p>
+                </div>
+            </div>
+            <div class="card w-25 text-bg-primary">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <h4>이산화질소</h4>
+                    <i class="fa-solid fa-face-laugh-squint mb-4" style="font-size: 100px"></i>
+                    <h2 class="card-text">좋음</h2>
+                    <p class="card-text">0.020ppm</p>
+                    <p class="card-text">신선한 공기 많이 마시세요~</p>
+                </div>
             </div>
         </div>
 
