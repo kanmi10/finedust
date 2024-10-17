@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -80,9 +81,12 @@ public class DustController {
         return "dust/list";
     }
 
-    //TODO 검색안되는 오류 해결
     @GetMapping("/search")
     public String searchDust(@RequestParam("searchWord") String search, Model model) throws SQLException {
+        if (!StringUtils.hasText(search)) {
+            return "redirect:/";
+        }
+
         Dust dust = dustService.searchDust(search);
         log.info("controller.dust={}", dust);
         model.addAttribute("dust", dust);
