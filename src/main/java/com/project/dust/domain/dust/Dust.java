@@ -3,6 +3,8 @@ package com.project.dust.domain.dust;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 /**
  * CREATE TABLE dust (
  *     id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 시퀀스 (자동 증가)
@@ -15,11 +17,12 @@ import lombok.Setter;
  */
 @Getter @Setter
 public class Dust {
-
-    private String sidoName;    //시도명
-    private String stationName; //측정소명
-    private String dataTime;    //측정일시
-    private Integer pm10Value;  //미세먼지(PM10 농도)
-    private Integer pm25Value;  //미세먼지(PM25 농도)
+    private Long stationId;         //측정소 id
+    private String sidoName;        //시도명
+    private String stationName;     //측정소명
+    private LocalDateTime dataTime; //측정일시
+    private Integer pm10Value;      //미세먼지(PM10 농도)
+    private Integer pm25Value;      //초미세먼지(PM25 농도)
+    private Double no2Value;       //이산화질소 농도
 
 }

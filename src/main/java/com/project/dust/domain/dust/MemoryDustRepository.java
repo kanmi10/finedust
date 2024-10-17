@@ -9,9 +9,11 @@ import java.util.List;
 public class MemoryDustRepository implements DustRepository {
 
     public static final List<Dust> dustDTOArr = new ArrayList<>();
+    private static Long sequence = 0L;
 
     @Override
     public Dust save(Dust dust) {
+        dust.setStationId(++sequence);
         dustDTOArr.add(dust);
         return dust;
     }

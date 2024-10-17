@@ -7,16 +7,20 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.DateFormatter;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @Slf4j
 public class DustService {
 
+    private static long sequence = 0L;
     private final DustRepository dustRepository;
 
     public DustService(DustRepository dustRepository) {
-        this.dustRepository = new MemoryDustRepository();
+        this.dustRepository = new JdbcDustRepository();
     }
 
     public void init(String jsonData) throws ParseException, SQLException {
@@ -27,29 +31,36 @@ public class DustService {
         JSONObject object = (JSONObject) parser.parse(jsonData);
         JSONObject response = (JSONObject) object.get("response");
         JSONObject body = (JSONObject) response.get("body");
-        JSONArray itemsArr = (JSONArray) body.get("items");
+        JSONArray items = (JSONArray) body.get("items");
 
         /**
-         *     private String sidoName;    //시도명
-         *     private String stationName; //측정소명
-         *     private String dataTime;    //측정일시
-         *     private Integer pm10Value;  //미세먼지(PM10 농도)
-         *     private Integer pm25Value;  //미세먼지(PM25 농도)
+         *     private Long stationId;         //측정소 id
+         *     private String sidoName;        //시도명
+         *     private String stationName;     //측정소명
+         *     private LocalDateTime dataTime; //측정일시
+         *     private Integer pm10Value;      //미세먼지(PM10 농도)
+         *     private Integer pm25Value;      //초미세먼지(PM25 농도)
+         *     private Integer no2Value;       //이산화질소 농도
          */
-        for (int i = 0; i < itemsArr.size(); i++) {
-            String sidoName = (String) ((JSONObject) itemsArr.get(i)).get("sidoName");
-            String stationName = (String) ((JSONObject) itemsArr.get(i)).get("stationName");
-            String dataTime = (String) ((JSONObject) itemsArr.get(i)).get("dataTime");
 
-            Integer pm10Value = getPmValue(itemsArr, i, "pm10Value");
-            Integer pm25Value = getPmValue(itemsArr, i, "pm25Value");
+        for (int i = 0; i < items.size(); i++) {
+            String sidoName = (String) ((JSONObject) items.get(i)).get("sidoName");
+            String stationName = (String) ((JSONObject) items.get(i)).get("stationName");
+            String dataTime = (String) ((JSONObject) items.get(i)).get("dataTime");
+
+            Integer pm10Value = getPmValue(items, i, "pm10Value");
+            Integer pm25Value = getPmValue(items, i, "pm25Value");
+            Double no2Value = getNo2Value(items, i, "no2Value");
 
             Dust dust = new Dust();
+            dust.setStationId(++sequence);
             dust.setSidoName(sidoName);
             dust.setStationName(stationName);
-            dust.setDataTime(dataTime);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            dust.setDataTime(getDateTime(dataTime, formatter));
             dust.setPm10Value(pm10Value);
             dust.setPm25Value(pm25Value);
+            dust.setNo2Value(no2Value);
 
             dustRepository.save(dust);
         }
@@ -57,13 +68,29 @@ public class DustService {
         log.info("object={}", object);
         log.info("response={}", response);
         log.info("body={}", body);
-        log.info("items={}", itemsArr);
+        log.info("items={}", items);
     }
 
-    private static Integer getPmValue(JSONArray itemsArr, int i, String pm) {
+    private LocalDateTime getDateTime(String dataTime, DateTimeFormatter formatter) {
+        try {
+            return LocalDateTime.parse(dataTime, formatter);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    private Integer getPmValue(JSONArray itemsArr, int i, String pm) {
         try {
             return Integer.valueOf((String) ((JSONObject) itemsArr.get(i)).get(pm));
         } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private Double getNo2Value(JSONArray itemsArr, int i, String ppm) {
+        try {
+            return Double.parseDouble((String)((JSONObject) itemsArr.get(i)).get(ppm));
+        } catch (NumberFormatException | NullPointerException e) {
             return null;
         }
     }
