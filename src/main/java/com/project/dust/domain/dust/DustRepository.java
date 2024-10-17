@@ -7,6 +7,6 @@ public interface DustRepository {
 
     void save(List<Dust> dusts) throws SQLException;
 
-
+    Dust searchDust(String search) throws SQLException;
 
 }

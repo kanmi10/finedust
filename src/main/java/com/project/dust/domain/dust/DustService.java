@@ -44,7 +44,6 @@ public class DustService {
          *     private Integer pm25Value;      //초미세먼지(PM25 농도)
          *     private Integer no2Value;       //이산화질소 농도
          */
-
         for (int i = 0; i < items.size(); i++) {
             String sidoName = (String) ((JSONObject) items.get(i)).get("sidoName");
             String stationName = (String) ((JSONObject) items.get(i)).get("stationName");
@@ -66,17 +65,12 @@ public class DustService {
 
             dusts.add(dust);
         }
-        long startTime = System.currentTimeMillis();
-        dustRepository.save(dusts);
-        long endTime = System.currentTimeMillis();
 
-        log.info("걸린 시간: " + (endTime - startTime) + "ms");
+        //dustRepository.save(dusts);
+    }
 
-
-      /*  log.info("object={}", object);
-        log.info("response={}", response);
-        log.info("body={}", body);
-        log.info("items={}", items);*/
+    public Dust searchDust(String search) throws SQLException {
+        return dustRepository.searchDust(search);
     }
 
     private LocalDateTime getDateTime(String dataTime, DateTimeFormatter formatter) {

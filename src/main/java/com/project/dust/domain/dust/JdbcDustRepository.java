@@ -4,6 +4,8 @@ import com.project.dust.connection.DBConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static java.sql.Types.*;
@@ -64,6 +66,57 @@ public class JdbcDustRepository implements DustRepository {
         }
 
         return null;
+    }
+
+    @Override
+    public Dust searchDust(String search) throws SQLException {
+        String sql = "select\n" +
+                "    stationName,\n" +
+                "    (select sidoName\n" +
+                "     from REGION\n" +
+                "     where REGION.sidoId = DUST.sidoId) sidoName,\n" +
+                "    dataTime,\n" +
+                "    pm10Value,\n" +
+                "    pm25Value,\n" +
+                "    no2Value\n" +
+                "from DUST\n" +
+                "where stationName = ?;";
+
+        log.info("sql={}", sql);
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBConnectionUtil.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, search);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Dust dust = new Dust();
+                dust.setSidoName(rs.getString("sidoName"));
+                dust.setStationName(rs.getString("stationName"));
+                // DataTime 타입 변환
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime parsedDataTime = LocalDateTime.parse(rs.getString("dataTime"), formatter);
+                dust.setDataTime(parsedDataTime);
+                dust.setPm10Value(rs.getInt("pm10Value"));
+                dust.setPm25Value(rs.getInt("pm25Value"));
+                dust.setNo2Value(rs.getDouble("no2Value"));
+
+                log.info("repository.dust={}", dust);
+
+                return dust;
+            }
+            return null;
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
     }
 
     public void addRegion() throws SQLException {

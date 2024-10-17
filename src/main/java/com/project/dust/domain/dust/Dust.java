@@ -1,5 +1,6 @@
 package com.project.dust.domain.dust;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  *     pm25_value INT                         -- 미세먼지(PM25 농도)
  * );
  */
-@Getter @Setter
+@Data
 public class Dust {
     private Long stationId;         //측정소 id
     private String sidoName;        //시도명
@@ -24,5 +25,4 @@ public class Dust {
     private Integer pm10Value;      //미세먼지(PM10 농도)
     private Integer pm25Value;      //초미세먼지(PM25 농도)
     private Double no2Value;       //이산화질소 농도
-
 }

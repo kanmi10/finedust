@@ -1,5 +1,6 @@
 package com.project.dust.web.controller;
 
+import com.project.dust.domain.dust.Dust;
 import com.project.dust.domain.dust.DustService;
 import com.project.dust.domain.dust.MemoryDustRepository;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +80,14 @@ public class DustController {
         return "dust/list";
     }
 
-
+    //TODO 검색안되는 오류 해결
+    @GetMapping("/search")
+    public String searchDust(@RequestParam("searchWord") String search, Model model) throws SQLException {
+        Dust dust = dustService.searchDust(search);
+        log.info("controller.dust={}", dust);
+        model.addAttribute("dust", dust);
+        return "home";
+    }
 
 
 }

@@ -23,4 +23,9 @@ public class MemoryDustRepository implements DustRepository {
     public void save(List<Dust> dusts) throws SQLException {
 
     }
+
+    @Override
+    public Dust searchDust(String search) throws SQLException {
+        return null;
+    }
 }
