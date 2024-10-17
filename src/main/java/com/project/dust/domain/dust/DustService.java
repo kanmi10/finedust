@@ -7,15 +7,17 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.DateFormatter;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
 public class DustService {
 
+    private static List<Dust> dusts = new ArrayList<>();
     private static long sequence = 0L;
     private final DustRepository dustRepository;
 
@@ -62,13 +64,19 @@ public class DustService {
             dust.setPm25Value(pm25Value);
             dust.setNo2Value(no2Value);
 
-            dustRepository.save(dust);
+            dusts.add(dust);
         }
+        long startTime = System.currentTimeMillis();
+        dustRepository.save(dusts);
+        long endTime = System.currentTimeMillis();
 
-        log.info("object={}", object);
+        log.info("걸린 시간: " + (endTime - startTime) + "ms");
+
+
+      /*  log.info("object={}", object);
         log.info("response={}", response);
         log.info("body={}", body);
-        log.info("items={}", items);
+        log.info("items={}", items);*/
     }
 
     private LocalDateTime getDateTime(String dataTime, DateTimeFormatter formatter) {

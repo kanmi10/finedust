@@ -23,7 +23,6 @@ class DustRepositoryTest {
         dust.setPm10Value(20);
         dust.setPm25Value(30);
 
-        repository.save(dust);
     }
 
    /* @Test

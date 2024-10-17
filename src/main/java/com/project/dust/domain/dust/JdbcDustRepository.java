@@ -4,6 +4,7 @@ import com.project.dust.connection.DBConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.util.List;
 
 import static java.sql.Types.*;
 
@@ -11,9 +12,7 @@ import static java.sql.Types.*;
 public class JdbcDustRepository implements DustRepository {
 
     @Override
-    public Dust save(Dust dust) throws SQLException {
-
-        System.out.println("JdbcDustRepository.save");
+    public void save(List<Dust> dusts) throws SQLException {
 
         String sql = "INSERT INTO DUST (stationId, sidoId, stationName, dataTime, pm10Value, pm25Value, no2Value) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
@@ -23,18 +22,21 @@ public class JdbcDustRepository implements DustRepository {
         try {
             con = DBConnectionUtil.getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setLong(1, dust.getStationId());
-            pstmt.setString(2, getSidoId(dust.getSidoName(), con));
-            pstmt.setString(3, dust.getStationName());
 
-            //2024-10-16 15:00
-            pstmt.setObject(4, dust.getDataTime());
+            for (Dust dust : dusts) {
+                pstmt.setLong(1, dust.getStationId());
+                pstmt.setString(2, getSidoId(dust.getSidoName(), con));
+                pstmt.setString(3, dust.getStationName());
 
-            pstmt.setObject(5, dust.getPm10Value(), INTEGER);
-            pstmt.setObject(6, dust.getPm25Value(), INTEGER);
-            pstmt.setObject(7, dust.getNo2Value(), DOUBLE);
-            pstmt.executeUpdate();
-            return dust;
+                //2024-10-16 15:00
+                pstmt.setObject(4, dust.getDataTime());
+
+                pstmt.setObject(5, dust.getPm10Value(), INTEGER);
+                pstmt.setObject(6, dust.getPm25Value(), INTEGER);
+                pstmt.setObject(7, dust.getNo2Value(), DOUBLE);
+                pstmt.executeUpdate();
+            }
+
         } catch (SQLException e) {
             log.error("db error", e);
             throw e;
