@@ -1,5 +1,7 @@
 package com.project.dust.web.controller;
 
+import com.project.dust.domain.dust.Dust;
+import com.project.dust.domain.dust.DustService;
 import com.project.dust.domain.member.Member;
 import com.project.dust.domain.member.MemberRepository;
 import com.project.dust.web.SessionConst;
@@ -12,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import java.sql.SQLException;
+
 import static com.project.dust.web.SessionConst.*;
 
 @Slf4j
@@ -19,8 +23,12 @@ import static com.project.dust.web.SessionConst.*;
 @RequiredArgsConstructor
 public class HomeController {
 
+    private final DustService dustService;
+
     @GetMapping("/")
-    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) {
+    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) throws SQLException {
+        Dust dust = dustService.searchDust("중구");
+        model.addAttribute("dust", dust);
 
         //세션에 회원 데이터가 없으면 home
         if (member == null) {
