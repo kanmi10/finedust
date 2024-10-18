@@ -88,7 +88,7 @@ public class DustController {
         }
 
         Dust dust = dustService.searchDust(search);
-        log.info("controller.dust={}", dust);
+//        log.info("controller.dust={}", dust);
         model.addAttribute("dust", dust);
         return "home";
     }
