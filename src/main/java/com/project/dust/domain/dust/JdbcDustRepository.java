@@ -100,11 +100,14 @@ public class JdbcDustRepository implements DustRepository {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 LocalDateTime parsedDataTime = LocalDateTime.parse(rs.getString("dataTime"), formatter);
                 dust.setDataTime(parsedDataTime);
-                dust.setPm10Value(rs.getInt("pm10Value"));
-                dust.setPm25Value(rs.getInt("pm25Value"));
+                dust.setPm10Value((Integer) rs.getObject("pm10Value"));
+                dust.setPm25Value((Integer) rs.getObject("pm25Value"));
                 dust.setNo2Value(rs.getDouble("no2Value"));
 
-                log.info("repository.dust={}", dust);
+                /*log.info("rs.getInt(pm10Value)={}", rs.getObject("pm10Value"));
+                log.info("rs.getInt(pm25Value)={}", rs.getObject("pm25Value"));
+                log.info("rs.getInt(no2Value)={}", rs.getObject("no2Value"));
+                log.info("repository.dust={}", dust);*/
 
                 return dust;
             }

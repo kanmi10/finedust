@@ -29,8 +29,8 @@ public class DustService {
     private final DustRepository dustRepository;
 
     public DustService(DustRepository dustRepository) {
-        //this.dustRepository = new JdbcDustRepository();
-        this.dustRepository = new MemoryDustRepository();
+        this.dustRepository = new JdbcDustRepository();
+        //this.dustRepository = new MemoryDustRepository();
     }
 
     public Dust searchDust(String search) throws SQLException {
