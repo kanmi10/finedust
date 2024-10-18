@@ -29,10 +29,8 @@ public class JdbcDustRepository implements DustRepository {
                 pstmt.setLong(1, dust.getStationId());
                 pstmt.setString(2, getSidoId(dust.getSidoName(), con));
                 pstmt.setString(3, dust.getStationName());
-
                 //2024-10-16 15:00
                 pstmt.setObject(4, dust.getDataTime());
-
                 pstmt.setObject(5, dust.getPm10Value(), INTEGER);
                 pstmt.setObject(6, dust.getPm25Value(), INTEGER);
                 pstmt.setObject(7, dust.getNo2Value(), DOUBLE);

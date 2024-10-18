@@ -1,5 +1,6 @@
 package com.project.dust.domain.dust;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
@@ -7,21 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class MemoryDustRepository implements DustRepository {
-
-    public static final List<Dust> dustDTOArr = new ArrayList<>();
-    private static Long sequence = 0L;
-
-    public Dust save(Dust dust) {
-        dust.setStationId(++sequence);
-        dustDTOArr.add(dust);
-        return dust;
-    }
-
 
     @Override
     public void save(List<Dust> dusts) throws SQLException {
-
+        log.info("dusts={}", dusts);
     }
 
     @Override
