@@ -102,7 +102,7 @@ public class JdbcDustRepository implements DustRepository {
                 dust.setDataTime(parsedDataTime);
                 dust.setPm10Value((Integer) rs.getObject("pm10Value"));
                 dust.setPm25Value((Integer) rs.getObject("pm25Value"));
-                dust.setNo2Value(rs.getDouble("no2Value"));
+                dust.setNo2Value((Double) rs.getObject("no2Value"));
 
                 /*log.info("rs.getInt(pm10Value)={}", rs.getObject("pm10Value"));
                 log.info("rs.getInt(pm25Value)={}", rs.getObject("pm25Value"));
