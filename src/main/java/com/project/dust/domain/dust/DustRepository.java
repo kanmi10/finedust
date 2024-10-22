@@ -9,4 +9,5 @@ public interface DustRepository {
 
     Dust searchDust(String search) throws SQLException;
 
+    List<String> findByStationName(String stationName) throws SQLException;
 }

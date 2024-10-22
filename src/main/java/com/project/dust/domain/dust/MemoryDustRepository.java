@@ -20,4 +20,9 @@ public class MemoryDustRepository implements DustRepository {
     public Dust searchDust(String search) throws SQLException {
         return null;
     }
+
+    @Override
+    public List<String> findByStationName(String stationName) {
+        return List.of();
+    }
 }

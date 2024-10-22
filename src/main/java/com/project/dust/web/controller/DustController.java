@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -41,6 +42,19 @@ public class DustController {
         log.info("controller.dust={}", dust);
         model.addAttribute("dust", dust);
         return "home";
+    }
+
+    /**
+     * 측정소명 자동완성 기능
+     * @param stationName
+     * @return 측정소명
+     */
+    @ResponseBody
+    @GetMapping("/searchStations")
+    public List<String> searchStations(@RequestParam("stationName") String stationName) throws SQLException {
+        List<String> stations = dustService.findStationsByName(stationName);
+        log.info("stations={}", stations);
+        return stations;
     }
 
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/styles.css" rel="stylesheet"/>
+</head>
+<body>
+<form>
+    <input class="input-group-text" id="stationInput" onkeyup="searchStation()" type="search" placeholder="지역명 또는 측정소명을 입력해보세요!">
+    <ul id="suggestions"></ul>
+</form>
+<script>
+    function searchStation() {
+        const query = document.getElementById("stationInput").value;
+
+        if (query.length > 1) {
+            fetch(`/search?searchWord=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const suggestions = document.getElementById("suggestions");
+                    suggestions.innerHTML = "";
+                    data.forEach(station => {
+                        const li = document.createElement("li");
+                        li.textContent = station;
+                        suggestions.appendChild(li);
+                    });
+                });
+        }
+    }
+</script>
+</body>
+</html>
