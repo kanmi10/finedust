@@ -28,7 +28,7 @@
                 <img class="align-items-center me-3" style="width: 120px; height: 50px;"
                      src="/assets/img/today_dust_logo.png" alt="미세먼지 로고">
             </a>
-            <form class="d-flex align-items-center" th:action="@{/search}" th:method="GET">
+            <form id="searchForm" class="d-flex align-items-center" th:action="@{/search}" th:method="GET">
                 <div class="input-group position-relative">
                     <input id="searchBox"  class="form-control" style="width: 500px" name="searchWord" type="search"
                            placeholder="지역명 또는 측정소명을 검색해보세요!" autocomplete="off">
@@ -247,6 +247,12 @@
                             let item = document.createElement('a');
                             item.classList.add('dropdown-item');
                             item.textContent = station;
+                            item.style.cursor='pointer'; // 클릭 가능한 포인터
+                            item.addEventListener('click', function () {
+                                document.getElementById('searchBox').value = station;
+                                dropdown.classList.remove('show');
+                                document.getElementById('searchForm').submit();
+                            });
                             dropdown.appendChild(item);
                         });
                         dropdown.classList.add('show');  // 드롭다운 표시
@@ -259,6 +265,17 @@
             document.getElementById('autocompleteDropdown').classList.remove('show');
         }
     });
+
+    //다른 곳을 클릭했을 때 드롭다운 박스를 닫기 위한 이벤트 리스너
+    document.addEventListener('click', function (event) {
+      let dropdown = document.getElementById('autocompleteDropdown');
+      let searchBox = document.getElementById('stationSearch');
+
+      //클릭한 요소가 검색창이나 드롭다운 항목이 아니면 드롭다운 닫기,
+        if (!dropdown.contains(event.target) && event.target !== searchBox) {
+            dropdown.classList.remove('show');
+        }
+    })
 </script>
 </body>
 </html>
