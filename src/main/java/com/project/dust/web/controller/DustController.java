@@ -3,6 +3,7 @@ package com.project.dust.web.controller;
 import com.project.dust.domain.dust.Dust;
 import com.project.dust.domain.dust.DustService;
 import com.project.dust.domain.dust.MemoryDustRepository;
+import com.project.dust.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
@@ -12,10 +13,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+
+import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
 @Slf4j
 @Controller
@@ -33,7 +37,8 @@ public class DustController {
     }
 
     @GetMapping("/search")
-    public String searchDust(@RequestParam("searchWord") String search, Model model) throws SQLException {
+    public String searchDust(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                             @RequestParam("searchWord") String search, Model model) throws SQLException {
         if (!StringUtils.hasText(search)) {
             return "redirect:/";
         }
@@ -41,7 +46,13 @@ public class DustController {
         Dust dust = dustService.searchDust(search);
         log.info("controller.dust={}", dust);
         model.addAttribute("dust", dust);
-        return "home";
+
+        if (member == null) {
+            return "home";
+        }
+
+        model.addAttribute("member", member);
+        return "loginHome";
     }
 
     /**
@@ -52,9 +63,7 @@ public class DustController {
     @ResponseBody
     @GetMapping("/searchStations")
     public List<String> searchStations(@RequestParam("stationName") String stationName) throws SQLException {
-        List<String> stations = dustService.findStationsByName(stationName);
-        log.info("stations={}", stations);
-        return stations;
+        return dustService.findStationsByName(stationName);
     }
 
 
