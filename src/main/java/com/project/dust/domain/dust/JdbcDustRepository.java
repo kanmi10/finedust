@@ -137,7 +137,7 @@ public class JdbcDustRepository implements DustRepository {
                 stationsNames.add(rs.getString("stationName"));
             }
 
-            log.info("stations={}", stationsNames);
+//            log.info("stations={}", stationsNames);
 
             return stationsNames;
 
@@ -154,7 +154,7 @@ public class JdbcDustRepository implements DustRepository {
     public void update(List<Dust> dusts) throws SQLException {
         String sql = "update DUST\n" +
                     "set dataTime = ?, pm10Value = ?, pm25Value = ?, no2Value = ?\n" +
-                    "where stationId = ?";
+                    "where stationName = ?";
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -165,13 +165,13 @@ public class JdbcDustRepository implements DustRepository {
 
             for (Dust dust : dusts) {
                 pstmt.setObject(1, dust.getDataTime());
-                pstmt.setObject(2, dust.getPm10Value());
-                pstmt.setObject(3, dust.getPm25Value());
-                pstmt.setObject(4, dust.getNo2Value());
-                pstmt.setLong(5, dust.getStationId());
+                pstmt.setObject(2, dust.getPm10Value(), INTEGER);
+                pstmt.setObject(3, dust.getPm25Value(), INTEGER);
+                pstmt.setObject(4, dust.getNo2Value(), DOUBLE);
+                pstmt.setString(5, dust.getStationName());
                 pstmt.executeUpdate();
+                log.info("dust={}", dust);
             }
-
         } catch (SQLException e) {
             log.error("db error", e);
             throw e;

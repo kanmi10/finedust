@@ -58,8 +58,9 @@ public class DustService {
     }
 
     private void update(String sidoName) throws ParseException, IOException, SQLException {
-        String apiJsonData = dustInit(sidoName);
-        apiJsonParser(apiJsonData);
+        String jsonData = dustInit(sidoName);
+        apiJsonParser(jsonData);
+        log.info("API 가져온 데이터={}", dusts);
         dustRepository.update(dusts);
     }
 
@@ -75,12 +76,12 @@ public class DustService {
         dustRepository.save(dusts);
     }
 
-    private void apiJsonParser(String sb) throws ParseException {
+    private void apiJsonParser(String apiJsonData) throws ParseException {
         //JSON 파서 객체 생성
         JSONParser parser = new JSONParser();
 
         //JSON 객체 생성
-        JSONObject object = (JSONObject) parser.parse(sb);
+        JSONObject object = (JSONObject) parser.parse(apiJsonData);
         JSONObject response = (JSONObject) object.get("response");
         JSONObject body = (JSONObject) response.get("body");
         JSONArray items = (JSONArray) body.get("items");
@@ -130,14 +131,13 @@ public class DustService {
          * 시도명	            sidoName	10	필수	서울	시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)
          * 오퍼레이션 버전	    ver	        4	옵션	1.0	버전별 상세 결과 참고
          */
-        StringBuilder apiUrl = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty"); /*URL*/
-        apiUrl.append("?").append(URLEncoder.encode("serviceKey", StandardCharsets.UTF_8)).append("=VvAbEIzs7k39WC7z6EbjgcZyXFWCBcR5Da8Kugfd1OXp1WRG7LieBQqDHSIaRgFOHEE62zzCgLqST%2F22LMwHww%3D%3D"); /*Service Key*/
-        apiUrl.append("&").append(URLEncoder.encode("returnType", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("json", StandardCharsets.UTF_8)); /*xml 또는 json*/
-        apiUrl.append("&").append(URLEncoder.encode("numOfRows", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1000", StandardCharsets.UTF_8)); /*한 페이지 결과 수*/
-        apiUrl.append("&").append(URLEncoder.encode("pageNo", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1", StandardCharsets.UTF_8)); /*페이지번호*/
-        apiUrl.append("&").append(URLEncoder.encode("sidoName", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode(sidoName, StandardCharsets.UTF_8)); /*시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)*/
-        apiUrl.append("&").append(URLEncoder.encode("ver", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1.0", StandardCharsets.UTF_8)); /*버전별 상세 결과 참고*/
-        return apiUrl.toString();
+        /*URL*/
+        return "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty" + "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=VvAbEIzs7k39WC7z6EbjgcZyXFWCBcR5Da8Kugfd1OXp1WRG7LieBQqDHSIaRgFOHEE62zzCgLqST%2F22LMwHww%3D%3D" + /*Service Key*/
+                "&" + URLEncoder.encode("returnType", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("json", StandardCharsets.UTF_8) + /*xml 또는 json*/
+                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1000", StandardCharsets.UTF_8) + /*한 페이지 결과 수*/
+                "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + /*페이지번호*/
+                "&" + URLEncoder.encode("sidoName", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(sidoName, StandardCharsets.UTF_8) + /*시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)*/
+                "&" + URLEncoder.encode("ver", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1.0", StandardCharsets.UTF_8);
     }
 
     public String dustInit(String sidoName) throws IOException {
