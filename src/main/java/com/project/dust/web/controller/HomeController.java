@@ -5,11 +5,13 @@ import com.project.dust.domain.dust.DustService;
 import com.project.dust.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.project.dust.web.SessionConst.*;
@@ -22,7 +24,7 @@ public class HomeController {
     private final DustService dustService;
 
     @GetMapping("/")
-    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) throws SQLException {
+    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) throws SQLException, ParseException, IOException {
         Dust dust = dustService.searchDust("중구");
         model.addAttribute("dust", dust);
 

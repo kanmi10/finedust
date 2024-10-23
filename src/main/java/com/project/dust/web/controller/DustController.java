@@ -2,7 +2,6 @@ package com.project.dust.web.controller;
 
 import com.project.dust.domain.dust.Dust;
 import com.project.dust.domain.dust.DustService;
-import com.project.dust.domain.dust.MemoryDustRepository;
 import com.project.dust.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +25,24 @@ import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 @RequiredArgsConstructor
 public class DustController {
 
-    private final MemoryDustRepository dustRepository;
     private final DustService dustService;
 
-    @GetMapping("/dust")
+   /* @GetMapping("/dust")
     @ResponseBody
     public String dust() throws IOException, ParseException, SQLException {
         dustService.init();
         return "ok";
-    }
+    }*/
 
+    /**
+     * 측정소 검색 기능
+     * @param member 로그인 회원 객체
+     * @param search 검색어
+     */
     @GetMapping("/search")
     public String searchDust(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
-                             @RequestParam("searchWord") String search, Model model) throws SQLException {
+                             @RequestParam("searchWord") String search, Model model) throws SQLException, ParseException, IOException {
+
         if (!StringUtils.hasText(search)) {
             return "redirect:/";
         }
@@ -56,9 +60,9 @@ public class DustController {
     }
 
     /**
-     * 측정소명 자동완성 기능
-     * @param stationName
-     * @return 측정소명
+     * 측정소 검색어 자동완성 기능
+     * @param stationName 측정소명
+     * @return 측정소명 집합
      */
     @ResponseBody
     @GetMapping("/searchStations")

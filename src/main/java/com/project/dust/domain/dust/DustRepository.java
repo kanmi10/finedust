@@ -1,6 +1,7 @@
 package com.project.dust.domain.dust;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DustRepository {
@@ -10,4 +11,6 @@ public interface DustRepository {
     Dust searchDust(String search) throws SQLException;
 
     List<String> findByStationName(String stationName) throws SQLException;
+
+    void update(List<Dust> dusts) throws SQLException;
 }

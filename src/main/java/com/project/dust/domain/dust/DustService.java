@@ -11,10 +11,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,42 +35,52 @@ public class DustService {
         //this.dustRepository = new MemoryDustRepository();
     }
 
-    public Dust searchDust(String search) throws SQLException {
-        return dustRepository.searchDust(search);
+    public Dust searchDust(String search) throws SQLException, ParseException, IOException {
+        Dust dust = dustRepository.searchDust(search);
+
+        LocalDateTime requestTime = LocalDateTime.now();
+        LocalDateTime dataTime = dust.getDataTime();
+
+        if (isDataOutOfDate(dataTime, requestTime)) {
+            //API 호출
+            update(dust.getSidoName());
+            return dustRepository.searchDust(search);
+        }
+
+        return dust;
     }
 
-    public void init() throws ParseException, SQLException, IOException {
-        // API 요청 URL 생성
-        URL url = new URL(getApiUrl());
+    // 데이터가 오래 됐는지
+    private boolean isDataOutOfDate(LocalDateTime dataTime, LocalDateTime requestTime) {
+        Duration between = Duration.between(dataTime, requestTime);
+        log.info("요청 시간 - 측정 시간 = {}", between.toMinutes());
+        return between.toMinutes() >= 60;
+    }
 
-        // 조합완료된 요청 URL 생성 / HttpURLConnection 객체 활용 API 요청
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/json");
+    private void update(String sidoName) throws ParseException, IOException, SQLException {
+        String apiJsonData = dustInit(sidoName);
+        apiJsonParser(apiJsonData);
+        dustRepository.update(dusts);
+    }
 
-        BufferedReader rd;
-        if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        } else {
-            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-        }
 
-        // 요청 결과 출력을 위한 준비
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
+    public void init(String sidoName) throws ParseException, IOException, SQLException {
+        //API 요청
+        String apiJsonData = dustInit(sidoName);
 
-        // 시스템 자원 반납 및 연결해제
-        rd.close();
-        conn.disconnect();
+        //API 반환 JSON 파싱
+        apiJsonParser(apiJsonData);
 
+        //DB 저장
+        dustRepository.save(dusts);
+    }
+
+    private void apiJsonParser(String sb) throws ParseException {
         //JSON 파서 객체 생성
         JSONParser parser = new JSONParser();
 
         //JSON 객체 생성
-        JSONObject object = (JSONObject) parser.parse(sb.toString());
+        JSONObject object = (JSONObject) parser.parse(sb);
         JSONObject response = (JSONObject) object.get("response");
         JSONObject body = (JSONObject) response.get("body");
         JSONArray items = (JSONArray) body.get("items");
@@ -103,15 +115,13 @@ public class DustService {
 
             dusts.add(dust);
         }
-
-        dustRepository.save(dusts);
     }
 
     /**
      * API 요청 URL 제작
      * @return API 요청 URL
      */
-    private String getApiUrl() {
+    private String getApiUrl(String sidoName) {
         /**
          * 서비스키	        serviceKey	4	필수	-	공공데이터포털에서 받은 인증키
          * 데이터표출방식	    returnType	4	옵션	xml	xml 또는 json
@@ -125,9 +135,37 @@ public class DustService {
         apiUrl.append("&").append(URLEncoder.encode("returnType", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("json", StandardCharsets.UTF_8)); /*xml 또는 json*/
         apiUrl.append("&").append(URLEncoder.encode("numOfRows", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1000", StandardCharsets.UTF_8)); /*한 페이지 결과 수*/
         apiUrl.append("&").append(URLEncoder.encode("pageNo", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1", StandardCharsets.UTF_8)); /*페이지번호*/
-        apiUrl.append("&").append(URLEncoder.encode("sidoName", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("전국", StandardCharsets.UTF_8)); /*시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)*/
+        apiUrl.append("&").append(URLEncoder.encode("sidoName", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode(sidoName, StandardCharsets.UTF_8)); /*시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)*/
         apiUrl.append("&").append(URLEncoder.encode("ver", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1.0", StandardCharsets.UTF_8)); /*버전별 상세 결과 참고*/
         return apiUrl.toString();
+    }
+
+    public String dustInit(String sidoName) throws IOException {
+        // 조합완료된 요청 URL 생성 / HttpURLConnection 객체 활용 API 요청
+        URL url = new URL(getApiUrl(sidoName));
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
+
+        BufferedReader rd;
+        if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+
+        // 요청 결과 출력을 위한 준비
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+
+        // 시스템 자원 반납 및 연결해제
+        rd.close();
+        conn.disconnect();
+
+        return sb.toString();
     }
 
     private LocalDateTime getDateTime(String dataTime, DateTimeFormatter formatter) {

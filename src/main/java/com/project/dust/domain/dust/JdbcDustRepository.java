@@ -81,8 +81,6 @@ public class JdbcDustRepository implements DustRepository {
                 "from DUST\n" +
                 "where stationName = ?;";
 
-        log.info("sql={}", sql);
-
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -104,13 +102,6 @@ public class JdbcDustRepository implements DustRepository {
                 dust.setPm10Value((Integer) rs.getObject("pm10Value"));
                 dust.setPm25Value((Integer) rs.getObject("pm25Value"));
                 dust.setNo2Value((Double) rs.getObject("no2Value"));
-
-                /*
-                log.info("rs.getInt(pm10Value)={}", rs.getObject("pm10Value"));
-                log.info("rs.getInt(pm25Value)={}", rs.getObject("pm25Value"));
-                log.info("rs.getInt(no2Value)={}", rs.getObject("no2Value"));
-                log.info("repository.dust={}", dust);
-                */
 
                 return dust;
             }
@@ -159,19 +150,28 @@ public class JdbcDustRepository implements DustRepository {
 
     }
 
-    public void addRegion() throws SQLException {
-        String sql = "insert into REGION (sidoId, sidoName) values (?, ?);";
+    @Override
+    public void update(List<Dust> dusts) throws SQLException {
+        String sql = "update DUST\n" +
+                    "set dataTime = ?, pm10Value = ?, pm25Value = ?, no2Value = ?\n" +
+                    "where stationId = ?";
 
         Connection con = null;
         PreparedStatement pstmt = null;
 
         try {
             con = DBConnectionUtil.getConnection();
-            log.info("con={}", con);
             pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, 1);
-            pstmt.setString(2, "서울");
-            pstmt.executeUpdate();
+
+            for (Dust dust : dusts) {
+                pstmt.setObject(1, dust.getDataTime());
+                pstmt.setObject(2, dust.getPm10Value());
+                pstmt.setObject(3, dust.getPm25Value());
+                pstmt.setObject(4, dust.getNo2Value());
+                pstmt.setLong(5, dust.getStationId());
+                pstmt.executeUpdate();
+            }
+
         } catch (SQLException e) {
             log.error("db error", e);
             throw e;
@@ -180,23 +180,6 @@ public class JdbcDustRepository implements DustRepository {
         }
     }
 
-    void selectRegion() {
-        String sql = "select * from REGION;";
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            con = DBConnectionUtil.getConnection();
-            pstmt = con.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            close(con, pstmt, rs);
-        }
-    }
 
 
     private void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
