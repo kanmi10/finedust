@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -60,6 +59,7 @@ public class DustService {
     private void update(String sidoName) throws ParseException, IOException, SQLException {
         String jsonData = dustInit(sidoName);
         apiJsonParser(jsonData);
+
         log.info("API 가져온 데이터={}", dusts);
         dustRepository.update(dusts);
     }
@@ -108,8 +108,10 @@ public class DustService {
             dust.setStationId(++sequence);
             dust.setSidoName(sidoName);
             dust.setStationName(stationName);
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             dust.setDataTime(getDateTime(dataTime, formatter));
+
             dust.setPm10Value(pm10Value);
             dust.setPm25Value(pm25Value);
             dust.setNo2Value(no2Value);

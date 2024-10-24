@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.sql.SQLException;
+
 import static com.project.dust.web.SessionConst.*;
 
 @Slf4j
@@ -29,7 +31,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("loginForm") LoginForm form, BindingResult result, HttpServletRequest request) {
+    public String login(@Valid @ModelAttribute("loginForm") LoginForm form, BindingResult result, HttpServletRequest request) throws SQLException {
         if (result.hasErrors()) {
             log.info("errors={}", result);
             return "members/login";

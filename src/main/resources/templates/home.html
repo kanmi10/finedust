@@ -57,7 +57,7 @@
             <i class="text-danger fa-solid fa-location-crosshairs" style="font-size: 2rem;"></i>
             <h3 class="text-light ms-2" th:text="${dust.sidoName} + ' > ' + ${dust.stationName}">수지구 풍덕천1동</h3>
         </span>
-        <h6 class="text-light mb-4 ms-5" th:text="${#temporals.format(dust.dataTime, 'yyyy-MM-dd a hh:mm')}">2024-10-14
+        <h6 class="text-light mb-4 ms-5" th:text="${#temporals.format(dust.dataTime, '측정일시: yyyy-MM-dd a hh:mm')}">2024-10-14
             오후 03:25</h6>
 
         <!-- 대기오염 카드 -->

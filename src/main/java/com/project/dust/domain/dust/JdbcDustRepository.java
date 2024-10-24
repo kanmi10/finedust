@@ -48,9 +48,10 @@ public class JdbcDustRepository implements DustRepository {
 
 
     private String getSidoId(String sidoName, Connection con) {
-        String sql = "select sidoId from region where sidoName=?";
+        String sql = "select sidoId from region where sidoName = ?";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+
         try {
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, sidoName);
@@ -61,7 +62,7 @@ public class JdbcDustRepository implements DustRepository {
         } catch (SQLException e) {
             log.error("db error", e);
         } finally {
-            close(null, pstmt, null);
+            close(null, pstmt, rs);
         }
 
         return null;
