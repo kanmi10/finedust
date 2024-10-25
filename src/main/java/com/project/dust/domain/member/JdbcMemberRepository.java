@@ -20,6 +20,7 @@ public class JdbcMemberRepository implements MemberRepository {
 
     @Override
     public Member save(Member member) throws SQLException {
+
         String sql = "insert into MEMBER (memberId, loginId, password, name) values (?, ?, ?, ?)";
 
         Connection con = null;
@@ -30,6 +31,7 @@ public class JdbcMemberRepository implements MemberRepository {
             con = DBConnectionUtil.getConnection();
             pstmt = con.prepareStatement(sql);
             pstmt.setLong(1, ++sequence);
+            member.setId(sequence);
             pstmt.setString(2, member.getLoginId());
             pstmt.setString(3, member.getPassword());
             pstmt.setString(4, member.getName());
@@ -120,6 +122,26 @@ public class JdbcMemberRepository implements MemberRepository {
             throw e;
         } finally {
             close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public void delete(Long memberId) throws SQLException {
+        String sql = "delete from MEMBER where memberId = ?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = DBConnectionUtil.getConnection();
+            pstmt = con.prepareStatement(sql);
+
+            pstmt.setLong(1, memberId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, null);
         }
     }
 

@@ -3,6 +3,7 @@ package com.project.dust.domain.member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,11 @@ public class MemoryMemberRepository implements MemberRepository {
 
     public List<Member> findAll() {
         return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public void delete(Long memberId) throws SQLException {
+
     }
 
     public void clearStore() {

@@ -15,4 +15,5 @@ public interface MemberRepository {
 
     List<Member> findAll() throws SQLException;
 
+    void delete(Long memberId) throws SQLException;
 }
