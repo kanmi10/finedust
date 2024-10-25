@@ -2,7 +2,11 @@ package com.project.dust.domain.dust;
 
 import com.project.dust.connection.DBConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,8 +18,16 @@ import static java.sql.Types.*;
 @Slf4j
 public class JdbcDustRepository implements DustRepository {
 
+    private final DataSource dataSource;
+    private final SQLExceptionTranslator exTranslator;
+
+    public JdbcDustRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+        this.exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
+    }
+
     @Override
-    public void save(List<Dust> dusts) throws SQLException {
+    public void save(List<Dust> dusts) {
 
         String sql = "INSERT INTO DUST (stationId, sidoId, stationName, dataTime, pm10Value, pm25Value, no2Value) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
@@ -40,7 +52,7 @@ public class JdbcDustRepository implements DustRepository {
 
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("save", sql, e);
         } finally {
             close(con, pstmt, null);
         }
@@ -61,6 +73,7 @@ public class JdbcDustRepository implements DustRepository {
             }
         } catch (SQLException e) {
             log.error("db error", e);
+            throw exTranslator.translate("getSidoId", sql, e);
         } finally {
             close(null, pstmt, rs);
         }
@@ -69,7 +82,7 @@ public class JdbcDustRepository implements DustRepository {
     }
 
     @Override
-    public Dust searchDust(String search) throws SQLException {
+    public Dust searchDust(String search) {
         String sql = "select\n" +
                 "    stationName,\n" +
                 "    (select sidoName\n" +
@@ -110,14 +123,14 @@ public class JdbcDustRepository implements DustRepository {
 
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("searchDust", sql, e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public List<String> findByStationName(String stationName) throws SQLException {
+    public List<String> findByStationName(String stationName) {
         String sql = "select stationName\n" +
                      "from DUST\n" +
                      "where stationName like ?";
@@ -144,7 +157,7 @@ public class JdbcDustRepository implements DustRepository {
 
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("findByStationName", sql, e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -152,7 +165,7 @@ public class JdbcDustRepository implements DustRepository {
     }
 
     @Override
-    public void update(List<Dust> dusts) throws SQLException {
+    public void update(List<Dust> dusts) {
         String sql = "update DUST\n" +
                     "set dataTime = ?, pm10Value = ?, pm25Value = ?, no2Value = ?\n" +
                     "where stationName = ?";
@@ -175,37 +188,22 @@ public class JdbcDustRepository implements DustRepository {
             }
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("update", sql, e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
-
-
-    private void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
-        if (pstmt != null) {
-            try {
-                pstmt.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
+    private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
+        JdbcUtils.closeResultSet(rs);
+        JdbcUtils.closeStatement(stmt);
+        JdbcUtils.closeConnection(con);
     }
+
+    private Connection getConnection(DataSource dataSource) throws SQLException {
+        return dataSource.getConnection();
+    }
+
+
+
 }

@@ -1,7 +1,9 @@
 package com.project.dust.domain.dust;
 
+import com.project.dust.connection.ConnectionConst;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -10,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JdbcDustRepositoryTest {
 
-    DustRepository dustRepository = new JdbcDustRepository();
+    DustRepository dustRepository = new JdbcDustRepository(new DriverManagerDataSource(ConnectionConst.URL, ConnectionConst.USERNAME, ConnectionConst.PASSWORD));
 
     @Test
     void save() {

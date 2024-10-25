@@ -13,12 +13,12 @@ import java.util.List;
 public class MemoryDustRepository implements DustRepository {
 
     @Override
-    public void save(List<Dust> dusts) throws SQLException {
+    public void save(List<Dust> dusts) {
         log.info("dusts={}", dusts);
     }
 
     @Override
-    public Dust searchDust(String search) throws SQLException {
+    public Dust searchDust(String search) {
         return null;
     }
 

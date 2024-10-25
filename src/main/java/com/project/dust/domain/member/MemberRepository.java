@@ -6,13 +6,13 @@ import java.util.Optional;
 
 public interface MemberRepository {
 
-    Member save(Member member) throws SQLException;
+    Member save(Member member);
 
-    Member findById(Long id) throws SQLException;
+    Member findById(Long id);
 
-    Optional<Member> findByLoginId(String loginId) throws SQLException;
+    Optional<Member> findByLoginId(String loginId);
 
-    List<Member> findAll() throws SQLException;
+    List<Member> findAll();
 
-    void delete(Long memberId) throws SQLException;
+    void delete(Long memberId);
 }

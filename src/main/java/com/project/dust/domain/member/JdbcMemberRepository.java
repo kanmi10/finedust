@@ -1,9 +1,9 @@
 package com.project.dust.domain.member;
 
-import com.project.dust.connection.DBConnectionUtil;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -20,14 +20,16 @@ import java.util.Optional;
 public class JdbcMemberRepository implements MemberRepository {
 
     private final DataSource dataSource;
+    private final SQLExceptionTranslator exTranslator;
     private static Long sequence = 0L;
 
     public JdbcMemberRepository(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
     @Override
-    public Member save(Member member) throws SQLException {
+    public Member save(Member member) {
         String sql = "insert into MEMBER (memberId, loginId, password, name) values (?, ?, ?, ?)";
 
         Connection con = null;
@@ -48,7 +50,7 @@ public class JdbcMemberRepository implements MemberRepository {
 
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("save", sql, e);
         } finally {
             close(con, pstmt, null);
         }
@@ -57,7 +59,7 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Member findById(Long id) throws SQLException {
+    public Member findById(Long id) {
         String sql = "select * from MEMBER where memberId = ?";
 
         Connection con = null;
@@ -84,7 +86,7 @@ public class JdbcMemberRepository implements MemberRepository {
 
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("findById", sql, e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -92,14 +94,14 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByLoginId(String loginId) throws SQLException {
+    public Optional<Member> findByLoginId(String loginId) {
         return findAll().stream()
                 .filter(member -> member.getLoginId().equals(loginId))
                 .findFirst();
     }
 
     @Override
-    public List<Member> findAll() throws SQLException {
+    public List<Member> findAll() {
         String sql = "select * from MEMBER";
         List<Member> members = new ArrayList<>();
 
@@ -127,14 +129,14 @@ public class JdbcMemberRepository implements MemberRepository {
 
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("findAll", sql, e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public void delete(Long memberId) throws SQLException {
+    public void delete(Long memberId) {
         String sql = "delete from MEMBER where memberId = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -147,7 +149,7 @@ public class JdbcMemberRepository implements MemberRepository {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             log.error("db error", e);
-            throw e;
+            throw exTranslator.translate("delete", sql, e);
         } finally {
             close(con, pstmt, null);
         }

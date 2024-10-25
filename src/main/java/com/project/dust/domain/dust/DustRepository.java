@@ -5,11 +5,11 @@ import java.util.List;
 
 public interface DustRepository {
 
-    void save(List<Dust> dusts) throws SQLException;
+    void save(List<Dust> dusts);
 
-    Dust searchDust(String search) throws SQLException;
+    Dust searchDust(String search);
 
-    List<String> findByStationName(String stationName) throws SQLException;
+    List<String> findByStationName(String stationName);
 
-    void update(List<Dust> dusts) throws SQLException;
+    void update(List<Dust> dusts);
 }

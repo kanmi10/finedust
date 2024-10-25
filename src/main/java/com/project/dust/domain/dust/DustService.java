@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -21,6 +22,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.project.dust.connection.ConnectionConst.*;
+
 @Slf4j
 @Service
 public class DustService {
@@ -29,23 +32,27 @@ public class DustService {
     private static long sequence = 0L;
     private final DustRepository dustRepository;
 
-    public DustService(DustRepository dustRepository) {
-        this.dustRepository = new JdbcDustRepository();
-        //this.dustRepository = new MemoryDustRepository();
+    public DustService() {
+        this.dustRepository = new JdbcDustRepository(new DriverManagerDataSource(URL, USERNAME, PASSWORD));
     }
 
-    public Dust searchDust(String search) throws SQLException, ParseException, IOException {
+    // 같은 connection 사용해야 함.
+    public Dust searchDust(String search) {
+
+        //1. 측정소명으로 대기오염 데이터를 조회하고 dust 객체에 담음
         Dust dust = dustRepository.searchDust(search);
 
+        //2. dust 객체에 담겨있는 측정일시와 사용자 데이터 요청일시를 비교
         LocalDateTime requestTime = LocalDateTime.now();
         LocalDateTime dataTime = dust.getDataTime();
 
         if (isDataOutOfDate(dataTime, requestTime)) {
-            //API 호출
+            //3-1. 만약 오래된 데이터일 경우, API에서 데이터를 다시 가져와 DB 업데이트 한후 다시 대기오염 데이터를 조회해 dust 객체에 담음
             update(dust.getSidoName());
             return dustRepository.searchDust(search);
         }
 
+        //3-2. 최신 데이터일 경우 1에서 조회한 데이터를 사용자에게 보여줌
         return dust;
     }
 
@@ -56,7 +63,7 @@ public class DustService {
         return between.toMinutes() >= 60;
     }
 
-    private void update(String sidoName) throws ParseException, IOException, SQLException {
+    private void update(String sidoName) {
         String jsonData = dustInit(sidoName);
         apiJsonParser(jsonData);
 
@@ -65,7 +72,7 @@ public class DustService {
     }
 
 
-    public void init(String sidoName) throws ParseException, IOException, SQLException {
+    public void init(String sidoName)  {
         //API 요청
         String apiJsonData = dustInit(sidoName);
 
@@ -76,15 +83,21 @@ public class DustService {
         dustRepository.save(dusts);
     }
 
-    private void apiJsonParser(String apiJsonData) throws ParseException {
+    private void apiJsonParser(String apiJsonData) {
         //JSON 파서 객체 생성
         JSONParser parser = new JSONParser();
-
         //JSON 객체 생성
-        JSONObject object = (JSONObject) parser.parse(apiJsonData);
+        JSONObject object;
+        try {
+            object = (JSONObject) parser.parse(apiJsonData);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
         JSONObject response = (JSONObject) object.get("response");
         JSONObject body = (JSONObject) response.get("body");
         JSONArray items = (JSONArray) body.get("items");
+
 
         /**
          *     private Long stationId;         //측정소 id
@@ -142,30 +155,38 @@ public class DustService {
                 "&" + URLEncoder.encode("ver", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1.0", StandardCharsets.UTF_8);
     }
 
-    public String dustInit(String sidoName) throws IOException {
+    public String dustInit(String sidoName) {
         // 조합완료된 요청 URL 생성 / HttpURLConnection 객체 활용 API 요청
-        URL url = new URL(getApiUrl(sidoName));
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/json");
-
-        BufferedReader rd;
-        if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        } else {
-            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-        }
-
-        // 요청 결과 출력을 위한 준비
+        HttpURLConnection conn = null;
+        BufferedReader rd = null;
         StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
 
-        // 시스템 자원 반납 및 연결해제
-        rd.close();
-        conn.disconnect();
+        try {
+            URL url = new URL(getApiUrl(sidoName));
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-type", "application/json");
+
+            if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            } else {
+                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            }
+
+            // 요청 결과 출력을 위한 준비
+
+            String line;
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+
+            // 시스템 자원 반납 및 연결해제
+            rd.close();
+            conn.disconnect();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return sb.toString();
     }

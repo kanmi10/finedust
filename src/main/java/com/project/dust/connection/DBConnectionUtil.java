@@ -1,6 +1,7 @@
 package com.project.dust.connection;
 
 import lombok.extern.slf4j.Slf4j;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ public class DBConnectionUtil {
             throw new IllegalStateException(e);
         }
     }
+
 }
 
 
