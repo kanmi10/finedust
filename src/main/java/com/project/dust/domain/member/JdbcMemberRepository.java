@@ -1,9 +1,12 @@
 package com.project.dust.domain.member;
 
 import com.project.dust.connection.DBConnectionUtil;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,22 +19,27 @@ import java.util.Optional;
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
 
+    private final DataSource dataSource;
     private static Long sequence = 0L;
+
+    public JdbcMemberRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     public Member save(Member member) throws SQLException {
-
         String sql = "insert into MEMBER (memberId, loginId, password, name) values (?, ?, ?, ?)";
 
         Connection con = null;
         PreparedStatement pstmt = null;
-        ResultSet rs = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
+
             pstmt.setLong(1, ++sequence);
             member.setId(sequence);
+
             pstmt.setString(2, member.getLoginId());
             pstmt.setString(3, member.getPassword());
             pstmt.setString(4, member.getName());
@@ -57,7 +65,7 @@ public class JdbcMemberRepository implements MemberRepository {
         ResultSet rs = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
 
             pstmt.setLong(1, id);
@@ -100,7 +108,7 @@ public class JdbcMemberRepository implements MemberRepository {
         ResultSet rs = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();;
             pstmt = con.prepareStatement(sql);
 
             rs = pstmt.executeQuery();
@@ -132,7 +140,7 @@ public class JdbcMemberRepository implements MemberRepository {
         PreparedStatement pstmt = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();;
             pstmt = con.prepareStatement(sql);
 
             pstmt.setLong(1, memberId);
@@ -145,29 +153,16 @@ public class JdbcMemberRepository implements MemberRepository {
         }
     }
 
-    private void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
-        if (pstmt != null) {
-            try {
-                pstmt.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
+    private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
+        JdbcUtils.closeResultSet(rs);
+        JdbcUtils.closeStatement(stmt);
+        JdbcUtils.closeConnection(con);
     }
+
+    private Connection getConnection() throws SQLException {
+        Connection con = dataSource.getConnection();
+        log.info("get connection={}, class={}", con, con.getClass());
+        return con;
+    }
+
 }

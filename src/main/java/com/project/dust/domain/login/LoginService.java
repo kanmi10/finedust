@@ -3,6 +3,7 @@ package com.project.dust.domain.login;
 import com.project.dust.domain.member.JdbcMemberRepository;
 import com.project.dust.domain.member.Member;
 import com.project.dust.domain.member.MemberRepository;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class LoginService {
     private final MemberRepository memberRepository;
 
     public LoginService() {
-        this.memberRepository = new JdbcMemberRepository();
+        this.memberRepository = new JdbcMemberRepository(new HikariDataSource());
     }
 
     public Member login(String loginId, String password) throws SQLException {

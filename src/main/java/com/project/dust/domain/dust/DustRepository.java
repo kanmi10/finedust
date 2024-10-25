@@ -1,7 +1,6 @@
 package com.project.dust.domain.dust;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DustRepository {
