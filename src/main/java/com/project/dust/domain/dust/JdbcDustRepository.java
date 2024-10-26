@@ -200,7 +200,7 @@ public class JdbcDustRepository implements DustRepository {
         JdbcUtils.closeConnection(con);
     }
 
-    private Connection getConnection(DataSource dataSource) throws SQLException {
+    private Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 

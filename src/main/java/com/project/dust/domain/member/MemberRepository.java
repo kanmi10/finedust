@@ -1,6 +1,5 @@
 package com.project.dust.domain.member;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +14,6 @@ public interface MemberRepository {
     List<Member> findAll();
 
     void delete(Long memberId);
+
+    void favoriteStation(Long stationId, Long memberId);
 }

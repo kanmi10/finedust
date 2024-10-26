@@ -1,14 +1,11 @@
 package com.project.dust.domain.member;
 
-import com.project.dust.connection.ConnectionConst;
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.sql.SQLException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.project.dust.connection.ConnectionConst.*;
@@ -16,10 +13,10 @@ import static com.project.dust.connection.ConnectionConst.*;
 @Slf4j
 class MemberRepositoryTest {
 
-    MemberRepository memberRepository = new JdbcMemberRepository(new HikariDataSource());
+    MemberRepository memberRepository = new JdbcMemberRepository(new DriverManagerDataSource(URL, USERNAME, PASSWORD));
 
     @Test
-    void crud() throws SQLException {
+    void crud() {
         //save
         Member member = new Member("admin", "관리자", "admin!");
         memberRepository.save(member);

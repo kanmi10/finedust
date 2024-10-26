@@ -1,20 +1,18 @@
 package com.project.dust.web.controller;
 
-import com.project.dust.domain.member.JdbcMemberRepository;
 import com.project.dust.domain.member.Member;
-import com.project.dust.domain.member.MemberRepository;
 import com.project.dust.domain.member.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.Map;
+
+import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
 @Slf4j
 @Controller
@@ -42,4 +40,30 @@ public class MemberController {
     }
 
 
+
+    /**
+     * 즐겨찾기 기능
+     */
+    @ResponseBody
+    @PostMapping("/toggleFavorite")
+    public String toggleFavorite(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                                 @RequestBody Map<String, Object> payload) {
+
+        if (member == null) {
+            return "redirect:/";
+        }
+
+        String stationName = (String) payload.get("stationName");
+        boolean isFavorite = (Boolean) payload.get("favorite");
+
+        log.info("stationName={}, isFavorite={}", stationName, isFavorite);
+
+       /* if (isFavorite) {
+            memberService.addFavorite(stationName);
+        } else {
+            memberService.removeFavorite(stationName);
+        }*/
+
+        return "home";
+    }
 }

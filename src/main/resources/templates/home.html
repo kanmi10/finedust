@@ -35,9 +35,7 @@
                     <button class="btn btn-primary" type="submit">
                         <i class="fas fa-search"></i> <!-- Font Awesome 돋보기 아이콘 -->
                     </button>
-                    <div class="dropdown-menu w-100 position-absolute" id="autocompleteDropdown" style="top: 100%; left: 0; z-index: 1000;">
-
-                    </div>
+                    <div class="dropdown-menu w-100 position-absolute" id="autocompleteDropdown" style="top: 100%; left: 0; z-index: 1000;"></div>
                 </div>
             </form>
         </div>
@@ -275,7 +273,10 @@
         if (!dropdown.contains(event.target) && event.target !== searchBox) {
             dropdown.classList.remove('show');
         }
-    })
+    });
+
+</script>
+
 </script>
 </body>
 </html>

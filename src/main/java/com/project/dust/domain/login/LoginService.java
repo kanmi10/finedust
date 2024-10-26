@@ -21,7 +21,7 @@ public class LoginService {
         this.memberRepository = new JdbcMemberRepository(new DriverManagerDataSource(URL, USERNAME , PASSWORD));
     }
 
-    public Member login(String loginId, String password) throws SQLException {
+    public Member login(String loginId, String password) {
         return memberRepository.findByLoginId(loginId)
                 .filter(member -> member.getPassword().equals(password))
                 .orElse(null);

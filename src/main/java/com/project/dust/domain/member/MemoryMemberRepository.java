@@ -41,6 +41,11 @@ public class MemoryMemberRepository implements MemberRepository {
 
     }
 
+    @Override
+    public void favoriteStation(Long stationId, Long memberId) {
+
+    }
+
     public void clearStore() {
         store.clear();
     }

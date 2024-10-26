@@ -155,6 +155,25 @@ public class JdbcMemberRepository implements MemberRepository {
         }
     }
 
+    @Override
+    public void favoriteStation(Long stationId, Long memberId) {
+        String sql = "insert into BOOKMARK (stationId, memberId) values (?, ?)";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, stationId);
+            pstmt.setLong(2, memberId);
+            pstmt.executeQuery();
+        } catch (SQLException e) {
+            throw exTranslator.translate("favoriteStation", sql, e);
+        } finally {
+            close(con, pstmt, null);
+        }
+    }
+
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
         JdbcUtils.closeResultSet(rs);
         JdbcUtils.closeStatement(stmt);

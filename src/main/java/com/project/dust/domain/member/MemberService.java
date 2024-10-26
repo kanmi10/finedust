@@ -18,4 +18,12 @@ public class MemberService {
     public void join(Member member) {
         memberRepository.save(member);
     }
+
+    public void addFavorite(String stationName) {
+        memberRepository.favoriteStation(1L, 1L);
+    }
+
+    public void removeFavorite(String stationName) {
+
+    }
 }
