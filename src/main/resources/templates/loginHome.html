@@ -37,7 +37,6 @@
                     </button>
                     <div class="dropdown-menu w-100 position-absolute" id="autocompleteDropdown"
                          style="top: 100%; left: 0; z-index: 1000;">
-
                     </div>
                 </div>
             </form>
@@ -62,9 +61,18 @@
             <h3 id="sidoName" class="text-light ms-2" th:text="${dust.sidoName} + ' > '">서울</h3>
             <h3 id="stationName" class="text-light ms-2" th:text="${dust.stationName}">중구</h3>
             <!-- 즐겨찾기 아이콘 -->
-            <i id = "favoriteIcon" class="fa-regular fa-heart ms-3 text-danger btn" style="font-size: 1.5rem; outline: none;"></i>
+                <i id="favoriteIcon" class="fa-heart fa-regular ms-3 text-danger btn" style="font-size: 1.5rem; outline: none;"></i>
+            <div class="dropdown">
+                <button class="btn btn-info dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    MY 관심지역
+                </button>
+                <!-- 북마크 드롭다운 메뉴 -->
+                <ul class="dropdown-menu" id="bookmarkDropdown">
+                </ul>
+            </div>
         </span>
-        <h6 class="text-light mb-4 ms-5" th:text="${#temporals.format(dust.dataTime, '측정일시: yyyy-MM-dd a hh:mm')}">2024-10-14 오후 03:25</h6>
+        <h6 class="text-light mb-4 ms-5" th:text="${#temporals.format(dust.dataTime, '측정일시: yyyy-MM-dd a hh:mm')}">
+            2024-10-14 오후 03:25</h6>
 
         <!-- 대기오염 카드 -->
         <div class="d-flex justify-content-evenly">
@@ -283,14 +291,68 @@
         }
     });
 
+    // 페이지 로드 시 북마크 목록을 가져와서 표시하는 함수 호출
+    // 페이지 로드 시 북마크 유무 표시
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchFavorites();
+    });
+
+    function fetchFavorites() {
+        fetch("/members/getFavorites", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateFavoritesDropdown(data.favorites);
+                    updateFavoriteIcon(data.favorites);
+                } else {
+                    console.error("북마크 목록을 불러오는 데 실패했습니다.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    function updateFavoritesDropdown(favorites) {
+        const dropdown = document.getElementById("bookmarkDropdown");
+        dropdown.innerHTML = ""; // 드롭다운 초기화
+
+        // 각 북마크를 드롭다운 아이템으로 추가
+        favorites.forEach(favorite => {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `<a class="dropdown-item" href="#">${favorite}</a>`;
+            dropdown.appendChild(listItem);
+        });
+    }
+
+    function updateFavoriteIcon(favorites) {
+        const stationName = document.getElementById('stationName').textContent;
+        const favoriteIcon = document.getElementById('favoriteIcon');
+
+        // 즐겨찾기 상태 확인
+        favorites.forEach(favorite => {
+                // 현재 측정소명이 즐겨찾기 목록에 있으면 꽉 찬 하트 아이콘으로 설정
+                if (favorite.includes(stationName)) {
+                    favoriteIcon.classList.remove('fa-regular');
+                    favoriteIcon.classList.add('fa-solid');
+                }
+            });
+
+    };
+
     document.getElementById('favoriteIcon').addEventListener('click', function () {
+
         // 아이콘 상태 변경
         this.classList.toggle('fa-regular');
         this.classList.toggle('fa-solid');
 
         // 아이콘 상태와 측정소명 가져오기
-        const isFavorite = this.classList.contains('fa-solid'); // 꽉 찬 하트면 true
         const stationName = document.getElementById('stationName').textContent;
+        const isFavorite = this.classList.contains('fa-solid'); // 꽉 찬 하트면 true
+
 
         // AJAX 요청 보내기
         fetch('/members/toggleFavorite', {
@@ -309,6 +371,7 @@
             })
             .catch(error => console.error('에러 발생:', error));
     });
+
 </script>
 </body>
 </html>

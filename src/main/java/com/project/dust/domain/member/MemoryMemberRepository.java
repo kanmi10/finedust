@@ -3,10 +3,7 @@ package com.project.dust.domain.member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -59,6 +56,11 @@ public class MemoryMemberRepository implements MemberRepository {
     @Override
     public Long hasFavoriteForStation(Long memberId, Long stationId) {
         return 0L;
+    }
+
+    @Override
+    public Set<String> getFavorites(Long memberId) {
+        return null;
     }
 
     public void clearStore() {

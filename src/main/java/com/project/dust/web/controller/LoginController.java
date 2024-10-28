@@ -3,18 +3,20 @@ package com.project.dust.web.controller;
 import com.project.dust.domain.login.LoginForm;
 import com.project.dust.domain.login.LoginService;
 import com.project.dust.domain.member.Member;
+import com.project.dust.domain.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.sql.SQLException;
+import java.util.Set;
 
 import static com.project.dust.web.SessionConst.*;
 
@@ -24,6 +26,7 @@ import static com.project.dust.web.SessionConst.*;
 public class LoginController {
 
     private final LoginService loginService;
+    private final MemberService memberService;
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
@@ -31,7 +34,9 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("loginForm") LoginForm form, BindingResult result, HttpServletRequest request) {
+    public String login(@Valid @ModelAttribute("loginForm") LoginForm form,
+                        BindingResult result,
+                        HttpServletRequest request) {
         if (result.hasErrors()) {
             log.info("errors={}", result);
             return "members/login";
@@ -48,6 +53,10 @@ public class LoginController {
         //로그인 성공 처리
         HttpSession session = request.getSession();
         session.setAttribute(LOGIN_MEMBER, loginMember);
+
+        //북마크 상태 조회 및 유지
+        session.setAttribute(FAVORITES, memberService.getFavorite(loginMember.getId()));
+        log.info("즐겨찾기 목록={}", memberService.getFavorite(loginMember.getId()));
 
         return "redirect:/";
     }

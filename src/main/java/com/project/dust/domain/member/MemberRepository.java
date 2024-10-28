@@ -2,6 +2,7 @@ package com.project.dust.domain.member;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface MemberRepository {
 
@@ -22,4 +23,6 @@ public interface MemberRepository {
     Long getStationName(String stationName);
 
     Long hasFavoriteForStation(Long memberId, Long stationId);
+
+    Set<String> getFavorites(Long memberId);
 }

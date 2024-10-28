@@ -5,6 +5,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Set;
+
 import static com.project.dust.connection.ConnectionConst.*;
 
 @Service
@@ -39,5 +41,9 @@ public class MemberService {
         }
 
         log.info("북마크 삭제 {}, 회원번호: {} 측정소번호: {}", bookmarkId, memberId, stationId);
+    }
+
+    public Set<String> getFavorite(Long memberId) {
+        return memberRepository.getFavorites(memberId);
     }
 }

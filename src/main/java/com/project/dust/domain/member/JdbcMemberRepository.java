@@ -11,10 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -22,7 +19,6 @@ public class JdbcMemberRepository implements MemberRepository {
 
     private final DataSource dataSource;
     private final SQLExceptionTranslator exTranslator;
-    private static Long sequence = 0L;
 
     public JdbcMemberRepository(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -31,7 +27,7 @@ public class JdbcMemberRepository implements MemberRepository {
 
     @Override
     public Member save(Member member) {
-        String sql = "insert into MEMBER (memberId, loginId, password, name) values (?, ?, ?, ?)";
+        String sql = "insert into MEMBER (loginId, password, name) values (?, ?, ?)";
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -40,12 +36,9 @@ public class JdbcMemberRepository implements MemberRepository {
             con = getConnection();
             pstmt = con.prepareStatement(sql);
 
-            pstmt.setLong(1, ++sequence);
-            member.setId(sequence);
-
-            pstmt.setString(2, member.getLoginId());
-            pstmt.setString(3, member.getPassword());
-            pstmt.setString(4, member.getName());
+            pstmt.setString(1, member.getLoginId());
+            pstmt.setString(2, member.getPassword());
+            pstmt.setString(3, member.getName());
 
             pstmt.executeUpdate();
 
@@ -251,6 +244,40 @@ public class JdbcMemberRepository implements MemberRepository {
 
     }
 
+    @Override
+    public Set<String> getFavorites(Long memberId) {
+        String sql = "select (select stationName\n" +
+                    "        from DUST\n" +
+                    "        where BOOKMARK.stationId = DUST.stationId) stationName\n" +
+                    "from BOOKMARK\n" +
+                    "where memberId = ?";
+
+        Set<String> favorites = new HashSet<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, memberId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                favorites.add(rs.getString("stationName"));
+            }
+
+            return favorites;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("getFavorites", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+    }
+
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
         JdbcUtils.closeResultSet(rs);
         JdbcUtils.closeStatement(stmt);
@@ -259,7 +286,7 @@ public class JdbcMemberRepository implements MemberRepository {
 
     private Connection getConnection() throws SQLException {
         Connection con = dataSource.getConnection();
-        log.info("get connection={}, class={}", con, con.getClass());
+        //log.info("get connection={}, class={}", con, con.getClass());
         return con;
     }
 
