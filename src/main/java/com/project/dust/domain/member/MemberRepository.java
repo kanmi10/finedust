@@ -15,5 +15,11 @@ public interface MemberRepository {
 
     void delete(Long memberId);
 
-    void favoriteStation(Long stationId, Long memberId);
+    void addFavorite(Long stationId, Long memberId);
+
+    void removeFavorite(Long bookmarkId);
+
+    Long getStationName(String stationName);
+
+    Long hasFavoriteForStation(Long memberId, Long stationId);
 }

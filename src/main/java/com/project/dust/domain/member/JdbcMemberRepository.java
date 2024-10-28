@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -156,7 +157,7 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void favoriteStation(Long stationId, Long memberId) {
+    public void addFavorite(Long stationId, Long memberId) {
         String sql = "insert into BOOKMARK (stationId, memberId) values (?, ?)";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -166,12 +167,88 @@ public class JdbcMemberRepository implements MemberRepository {
             pstmt = con.prepareStatement(sql);
             pstmt.setLong(1, stationId);
             pstmt.setLong(2, memberId);
-            pstmt.executeQuery();
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             throw exTranslator.translate("favoriteStation", sql, e);
         } finally {
             close(con, pstmt, null);
         }
+    }
+
+    @Override
+    public void removeFavorite(Long bookmarkId) {
+        String sql = "delete from BOOKMARK where bookmarkId = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, bookmarkId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw exTranslator.translate("removeFavorite", sql, e);
+        } finally {
+            close(con, pstmt, null);
+        }
+
+    }
+
+    @Override
+    public Long getStationName(String stationName) {
+        String sql = "select stationId from DUST where stationName = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, stationName);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getLong("stationId");
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("getStationName", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public Long hasFavoriteForStation(Long memberId, Long stationId) {
+        String sql = "select bookmarkId from BOOKMARK where memberId = ? and stationId = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, memberId);
+            pstmt.setLong(2, stationId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getLong("bookmarkId");
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("hasFavoriteForStation", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
     }
 
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {

@@ -42,8 +42,23 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void favoriteStation(Long stationId, Long memberId) {
+    public void addFavorite(Long stationId, Long memberId) {
 
+    }
+
+    @Override
+    public void removeFavorite(Long bookmarkId) {
+
+    }
+
+    @Override
+    public Long getStationName(String stationName) {
+        return 0L;
+    }
+
+    @Override
+    public Long hasFavoriteForStation(Long memberId, Long stationId) {
+        return 0L;
     }
 
     public void clearStore() {

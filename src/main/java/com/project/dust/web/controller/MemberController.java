@@ -40,7 +40,6 @@ public class MemberController {
     }
 
 
-
     /**
      * 즐겨찾기 기능
      */
@@ -49,6 +48,7 @@ public class MemberController {
     public String toggleFavorite(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
                                  @RequestBody Map<String, Object> payload) {
 
+        //회원X
         if (member == null) {
             return "redirect:/";
         }
@@ -58,12 +58,12 @@ public class MemberController {
 
         log.info("stationName={}, isFavorite={}", stationName, isFavorite);
 
-       /* if (isFavorite) {
-            memberService.addFavorite(stationName);
+        if (isFavorite) {
+            memberService.addFavorite(member.getId(), stationName);
         } else {
-            memberService.removeFavorite(stationName);
-        }*/
+            memberService.removeFavorite(member.getId(), stationName);
+        }
 
-        return "home";
+        return "loginHome";
     }
 }
