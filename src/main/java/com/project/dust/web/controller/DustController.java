@@ -41,7 +41,7 @@ public class DustController {
      */
     @GetMapping("/search")
     public String searchDust(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
-                             @RequestParam("searchWord") String search, Model model) throws SQLException, ParseException, IOException {
+                             @RequestParam("searchWord") String search, Model model) {
 
         if (!StringUtils.hasText(search)) {
             return "redirect:/";

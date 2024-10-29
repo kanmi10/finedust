@@ -291,8 +291,7 @@
         }
     });
 
-    // 페이지 로드 시 북마크 목록을 가져와서 표시하는 함수 호출
-    // 페이지 로드 시 북마크 유무 표시
+    // 페이지 로드 시 북마크 목록과 아이콘 클릭 유무를 가져와서 표시하는 함수 호출
     document.addEventListener("DOMContentLoaded", function () {
         fetchFavorites();
     });
@@ -322,10 +321,21 @@
 
         // 각 북마크를 드롭다운 아이템으로 추가
         favorites.forEach(favorite => {
-            const listItem = document.createElement("li");
-            listItem.innerHTML = `<a class="dropdown-item" href="#">${favorite}</a>`;
-            dropdown.appendChild(listItem);
+
+            //MY 관심지역 아이템 클릭시 바로 검색
+            let item = document.createElement('a');
+            item.classList.add('dropdown-item');
+            item.textContent = favorite;
+            item.style.cursor = 'pointer'; // 클릭 가능한 포인터
+            item.addEventListener('click', function () {
+                document.getElementById('searchBox').value = favorite;
+                dropdown.classList.remove('show');
+                document.getElementById('searchForm').submit();
+            });
+            dropdown.appendChild(item);
         });
+
+
     }
 
     function updateFavoriteIcon(favorites) {
@@ -342,6 +352,7 @@
             });
 
     };
+
 
     document.getElementById('favoriteIcon').addEventListener('click', function () {
 
@@ -370,8 +381,8 @@
                 console.log('즐겨찾기 상태 업데이트:', data);
             })
             .catch(error => console.error('에러 발생:', error));
-    });
 
+    });
 </script>
 </body>
 </html>
