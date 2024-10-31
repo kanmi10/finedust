@@ -1,6 +1,7 @@
 package com.project.dust.web.controller;
 
 import com.project.dust.domain.member.Member;
+import com.project.dust.domain.member.MemberSaveForm;
 import com.project.dust.domain.member.MemberService;
 import com.project.dust.web.validation.MemberValidator;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,6 @@ import static com.project.dust.web.SessionConst.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberValidator memberValidator;
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("member") Member member) {
@@ -34,7 +34,7 @@ public class MemberController {
     }
 
     @PostMapping("/add")
-    public String save(@Validated @ModelAttribute("member") Member member,
+    public String save(@Validated @ModelAttribute("member") MemberSaveForm form,
                        BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -42,14 +42,13 @@ public class MemberController {
             return "members/addMemberForm";
         }
 
+        Member member = new Member();
+        member.setLoginId(form.getLoginId());
+        member.setName(form.getName());
+        member.setPassword(form.getPassword());
+
         memberService.join(member);
         return "redirect:/";
-    }
-
-    @InitBinder
-    public void init(WebDataBinder dataBinder) {
-        log.info("init binder {}", dataBinder);
-        dataBinder.addValidators(memberValidator);
     }
 
 
