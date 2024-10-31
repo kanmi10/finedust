@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Set;
-
 import static com.project.dust.web.SessionConst.*;
 
 @Slf4j
@@ -35,10 +33,11 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") LoginForm form,
-                        BindingResult result,
+                        BindingResult bindingResult,
                         HttpServletRequest request) {
-        if (result.hasErrors()) {
-            log.info("errors={}", result);
+
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
             return "members/login";
         }
 
@@ -46,7 +45,7 @@ public class LoginController {
         log.info("loginMember={}", loginMember);
 
         if (loginMember == null) {
-            result.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "members/login";
         }
 

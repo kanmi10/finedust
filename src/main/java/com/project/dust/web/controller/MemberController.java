@@ -2,24 +2,22 @@ package com.project.dust.web.controller;
 
 import com.project.dust.domain.member.Member;
 import com.project.dust.domain.member.MemberService;
-import com.project.dust.web.SessionConst;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+import com.project.dust.web.validation.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import static com.project.dust.web.SessionConst.*;
-import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
 @Slf4j
 @Controller
@@ -28,6 +26,7 @@ import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberValidator memberValidator;
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("member") Member member) {
@@ -35,15 +34,22 @@ public class MemberController {
     }
 
     @PostMapping("/add")
-    public String save(@Valid @ModelAttribute("member") Member member, BindingResult result) throws SQLException {
-        if (result.hasErrors()) {
-            log.info("error={}", result);
+    public String save(@Validated @ModelAttribute("member") Member member,
+                       BindingResult bindingResult) {
 
+        if (bindingResult.hasErrors()) {
+            log.info("error={}", bindingResult);
             return "members/addMemberForm";
         }
 
         memberService.join(member);
         return "redirect:/";
+    }
+
+    @InitBinder
+    public void init(WebDataBinder dataBinder) {
+        log.info("init binder {}", dataBinder);
+        dataBinder.addValidators(memberValidator);
     }
 
 
@@ -52,14 +58,11 @@ public class MemberController {
      */
     @ResponseBody
     @PostMapping("/toggleFavorite")
-    public String toggleFavorite(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
-                                 @RequestBody Map<String, Object> payload,
-                                 HttpServletRequest request,
-                                 Model model) {
+    public ResponseEntity<String> toggleFavorite(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                                 @RequestBody Map<String, Object> payload) {
 
-        //회원X
         if (member == null) {
-            return "redirect:/";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 
         String stationName = (String) payload.get("stationName");
@@ -74,12 +77,7 @@ public class MemberController {
             memberService.removeFavorite(member.getId(), stationName);
         }
 
-       /* HttpSession session = request.getSession(false);
-
-        Set<String> favorite = memberService.getFavorite(member.getId());
-        session.setAttribute(FAVORITES, favorite);*/
-
-        return "loginHome";
+        return ResponseEntity.ok("즐겨찾기 상태가 업데이트됐습니다.");
     }
 
     @ResponseBody

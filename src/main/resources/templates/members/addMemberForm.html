@@ -23,22 +23,22 @@
                         <h1 class="fs-4 card-title fw-bold mb-4" th:text="#{label.signup}">회원가입</h1>
                         <form th:object="${member}" method="POST" class="needs-validation" novalidate="" autocomplete="off" >
                             <div class="mb-3">
-                                <input th:field="*{name}" type="text" class="form-control" required autofocus th:placeholder="#{label.name}">
-                                <div th:class="text-danger" th:errors="*{name}" >
+                                <input th:field="*{name}" th:errorclass="border-danger" type="text" class="form-control" autofocus th:placeholder="#{label.name}">
+                                <div th:errors="*{name}" class="text-danger">
                                     Name is required
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <input th:field="*{loginId}" class="form-control" required th:placeholder="#{label.id}">
-                                <div th:class="text-danger" th:errors="*{loginId}">
+                                <input th:field="*{loginId}" th:errorclass="border-danger" class="form-control" th:placeholder="#{label.id}">
+                                <div th:errors="*{loginId}" th:class="text-danger" >
                                     ID is invalid
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <input th:field="*{password}" type="password" class="form-control" required th:placeholder="#{label.password}">
-                                <div th:class="text-danger" th:errors="*{password}">
+                                <input th:field="*{password}" th:errorclass="border-danger" type="password" class="form-control" th:placeholder="#{label.password}">
+                                <div th:errors="*{password}" th:class="text-danger">
                                     Password is required
                                 </div>
                             </div>
