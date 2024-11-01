@@ -3,7 +3,7 @@ package com.project.dust.web.controller;
 import com.project.dust.domain.member.Member;
 import com.project.dust.domain.member.MemberSaveForm;
 import com.project.dust.domain.member.MemberService;
-import com.project.dust.web.validation.MemberValidator;
+import com.project.dust.web.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,8 +33,9 @@ public class MemberController {
     }
 
     @PostMapping("/add")
-    public String save(@Validated @ModelAttribute("member") MemberSaveForm form,
+    public String save(@Validated(ValidationSequence.class) @ModelAttribute("member") MemberSaveForm form,
                        BindingResult bindingResult) {
+
 
         if (bindingResult.hasErrors()) {
             log.info("error={}", bindingResult);
