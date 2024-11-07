@@ -34,7 +34,7 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void delete(Long memberId) {
+    public void deleteById(Long memberId) {
 
     }
 
@@ -70,6 +70,11 @@ public class MemoryMemberRepository implements MemberRepository {
 
     @Override
     public boolean isMemberIdDuplicate(String loginId) {
+        return false;
+    }
+
+    @Override
+    public boolean isWithdrawMember(String memberId) {
         return false;
     }
 

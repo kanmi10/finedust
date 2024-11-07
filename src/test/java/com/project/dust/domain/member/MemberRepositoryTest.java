@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 import static com.project.dust.connection.ConnectionConst.*;
@@ -33,7 +32,7 @@ class MemberRepositoryTest {
         Assertions.assertThat(member).isEqualTo(member1);
 
         //delete
-        memberRepository.delete(member.getId());
+        memberRepository.deleteById(member.getId());
         Member deleteMember = memberRepository.findById(member.getId());
         Assertions.assertThat(deleteMember).isNull();
     }

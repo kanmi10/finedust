@@ -25,6 +25,11 @@ public class JdbcMemberRepository implements MemberRepository {
         this.exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
+    /**
+     * 회원가입
+     * @param member 회원 객체
+     * @return 저장된 회원 객체
+     */
     @Override
     public Member save(Member member) {
         String sql = "insert into MEMBER (loginId, password, name) values (?, ?, ?)";
@@ -106,7 +111,6 @@ public class JdbcMemberRepository implements MemberRepository {
         try {
             con = getConnection();;
             pstmt = con.prepareStatement(sql);
-
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -115,6 +119,7 @@ public class JdbcMemberRepository implements MemberRepository {
                 member.setLoginId(rs.getString("loginId"));
                 member.setPassword(rs.getString("password"));
                 member.setName(rs.getString("name"));
+                member.setDeleted(rs.getBoolean("is_deleted"));
 
                 members.add(member);
             }
@@ -130,17 +135,19 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void delete(Long memberId) {
-        String sql = "delete from MEMBER where memberId = ?";
+    public void deleteById(Long memberId) {
+        String sql = "update MEMBER set is_deleted = true where memberId = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
 
         try {
-            con = getConnection();;
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
 
             pstmt.setLong(1, memberId);
             pstmt.executeUpdate();
+            log.info("[회원탈퇴 완료] 회원번호: {}", memberId);
+
         } catch (SQLException e) {
             log.error("db error", e);
             throw exTranslator.translate("delete", sql, e);
@@ -335,6 +342,35 @@ public class JdbcMemberRepository implements MemberRepository {
             close(con, pstmt, rs);
         }
     }
+
+    @Override
+    public boolean isWithdrawMember(String loginId) {
+        String sql = "select is_deleted from MEMBER where loginId = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, loginId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean("is_deleted");
+            }
+
+            throw new NoSuchElementException("회원 정보 없음!");
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("isMemberIdDuplicate", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+    }
+
 
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
         JdbcUtils.closeResultSet(rs);

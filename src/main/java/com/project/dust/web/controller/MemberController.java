@@ -4,6 +4,8 @@ import com.project.dust.domain.member.Member;
 import com.project.dust.domain.member.MemberSaveForm;
 import com.project.dust.domain.member.MemberService;
 import com.project.dust.web.validation.ValidationSequence;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,10 +38,12 @@ public class MemberController {
     public String save(@Validated(ValidationSequence.class) @ModelAttribute("member") MemberSaveForm form,
                        BindingResult bindingResult) {
 
+        // 아이디 중복검사
         if (memberService.checkIdDuplicate(form.getLoginId())) {
             bindingResult.rejectValue("loginId", "Duplicate");
         }
 
+        // 이름 중복검사
         if (memberService.checkNameDuplicate(form.getName())) {
             bindingResult.rejectValue("name", "Duplicate");
         }
@@ -58,6 +62,24 @@ public class MemberController {
         return "redirect:/";
     }
 
+    /**
+     * 회원탈퇴
+     * @param memberId 회원 ID
+     */
+    @PostMapping("/delete/{memberId}")
+    public String delete(@PathVariable("memberId") Long memberId,
+                         HttpServletRequest request) {
+        // 회원탈퇴
+        memberService.markAsDeleted(memberId);
+
+        // 세션 삭제
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return "redirect:/";
+    }
 
     /**
      * 즐겨찾기 기능

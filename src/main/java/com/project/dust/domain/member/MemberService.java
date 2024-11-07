@@ -4,9 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import static com.project.dust.connection.ConnectionConst.*;
@@ -45,7 +42,6 @@ public class MemberService {
         log.info("북마크 삭제 {}, 회원번호: {} 측정소번호: {}", bookmarkId, memberId, stationId);
     }
 
-
     /**
      * 회원가입 아이디 중복검사
      * @param loginId 아이디
@@ -67,4 +63,15 @@ public class MemberService {
     public Set<String> getFavorite(Long memberId) {
         return memberRepository.getFavorites(memberId);
     }
+
+    /**
+     * 회원탈퇴
+     * @param memberId 회원번호
+     */
+    public void markAsDeleted(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
+
+
+
 }

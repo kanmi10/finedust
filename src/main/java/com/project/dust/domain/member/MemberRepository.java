@@ -14,7 +14,7 @@ public interface MemberRepository {
 
     List<Member> findAll();
 
-    void delete(Long memberId);
+    void deleteById(Long memberId);
 
     void addFavorite(Long stationId, Long memberId);
 
@@ -29,4 +29,6 @@ public interface MemberRepository {
     boolean isMemberNameDuplicate(String name);
 
     boolean isMemberIdDuplicate(String loginId);
+
+    boolean isWithdrawMember(String memberId);
 }

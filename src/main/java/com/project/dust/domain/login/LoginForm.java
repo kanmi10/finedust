@@ -1,15 +1,15 @@
 package com.project.dust.domain.login;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class LoginForm {
 
-    @NotEmpty
+    @NotBlank
     private String loginId;
 
-    @NotEmpty
+    @NotBlank
     private String password;
 
 }

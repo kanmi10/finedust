@@ -13,6 +13,8 @@ public class Member {
 
     private String password;    //비밀번호
 
+    private boolean isDeleted; //탈퇴 유무
+
     public Member(String loginId, String name, String password) {
         this.loginId = loginId;
         this.name = name;

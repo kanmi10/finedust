@@ -23,7 +23,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
-                            @SessionAttribute(name = FAVORITES, required = false) Set<String> favorites,
                             Model model) {
         Dust dust = dustService.searchDust("중구");
         model.addAttribute("dust", dust);
