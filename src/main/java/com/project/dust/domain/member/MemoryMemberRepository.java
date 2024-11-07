@@ -63,6 +63,16 @@ public class MemoryMemberRepository implements MemberRepository {
         return null;
     }
 
+    @Override
+    public boolean isMemberNameDuplicate(String name) {
+        return false;
+    }
+
+    @Override
+    public boolean isMemberIdDuplicate(String loginId) {
+        return false;
+    }
+
     public void clearStore() {
         store.clear();
     }

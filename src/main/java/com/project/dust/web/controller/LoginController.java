@@ -53,8 +53,7 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(LOGIN_MEMBER, loginMember);
 
-        //북마크 상태 조회 및 유지
-        session.setAttribute(FAVORITES, memberService.getFavorite(loginMember.getId()));
+        //북마크 상태 조회
         log.info("즐겨찾기 목록={}", memberService.getFavorite(loginMember.getId()));
 
         return "redirect:/";

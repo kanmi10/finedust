@@ -36,6 +36,13 @@ public class MemberController {
     public String save(@Validated(ValidationSequence.class) @ModelAttribute("member") MemberSaveForm form,
                        BindingResult bindingResult) {
 
+        if (memberService.checkIdDuplicate(form.getLoginId())) {
+            bindingResult.rejectValue("loginId", "Duplicate");
+        }
+
+        if (memberService.checkNameDuplicate(form.getName())) {
+            bindingResult.rejectValue("name", "Duplicate");
+        }
 
         if (bindingResult.hasErrors()) {
             log.info("error={}", bindingResult);

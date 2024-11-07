@@ -25,4 +25,8 @@ public interface MemberRepository {
     Long hasFavoriteForStation(Long memberId, Long stationId);
 
     Set<String> getFavorites(Long memberId);
+
+    boolean isMemberNameDuplicate(String name);
+
+    boolean isMemberIdDuplicate(String loginId);
 }

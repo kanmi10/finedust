@@ -278,6 +278,64 @@ public class JdbcMemberRepository implements MemberRepository {
 
     }
 
+    @Override
+    public boolean isMemberNameDuplicate(String name) {
+        String sql = "select * from MEMBER where name = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                log.info("회원 이름 중복! 이름:{}", rs.getString("name"));
+                return true;
+            }
+
+            log.info("이름 중복 검사 통과");
+            return false;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("isMemberIdDuplicate", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public boolean isMemberIdDuplicate(String loginId) {
+        String sql = "select * from MEMBER where loginId = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, loginId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                log.info("회원 로그인ID 중복! ID:{}", rs.getString("loginId"));
+                return true;
+            }
+
+            log.info("아이디 중복 검사 통과");
+            return false;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("isMemberIdDuplicate", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
         JdbcUtils.closeResultSet(rs);
         JdbcUtils.closeStatement(stmt);
