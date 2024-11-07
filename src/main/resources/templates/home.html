@@ -21,28 +21,27 @@
 <body>
 <!-- 상단 -->
 <nav class="navbar bg-white bg-light static-top">
-    <div class="container d-flex justify-content-between align-items-center">
+    <div class="container d-flex justify-content-between align-items-center flex-nowrap"> <!-- **수정된 부분** -->
         <!-- 로고 및 검색 폼 -->
-        <div class="d-flex">
-            <a class="navbar-brand" href="#!" th:href="@{/}">
-                <img class="align-items-center me-3" style="width: 120px; height: 50px;"
-                     src="/assets/img/today_dust_logo.png" alt="미세먼지 로고">
+        <div class="d-flex align-items-center flex-grow-1"> <!-- **수정된 부분** -->
+            <a class="navbar-brand me-3" href="#!" th:href="@{/}">
+                <img style="width: 120px; height: 50px;" src="/assets/img/today_dust_logo.png" alt="미세먼지 로고">
             </a>
-            <form id="searchForm" class="d-flex align-items-center" th:action="@{/search}" th:method="GET">
-                <div class="input-group position-relative">
-                    <input id="searchBox"  class="form-control" style="width: 500px" name="searchWord" type="search"
-                           placeholder="지역명 또는 측정소명을 검색해보세요!" autocomplete="off">
+            <form id="searchForm" class="d-flex align-items-center flex-grow-1" th:action="@{/search}" th:method="GET"> <!-- **수정된 부분** -->
+                <div class="input-group flex-nowrap">
+                    <input id="searchBox" class="form-control" name="searchWord" type="search"
+                           placeholder="지역명 또는 측정소명을 검색해보세요!" autocomplete="off"
+                           style="min-width: 300px; max-width: 500px; flex-grow: 1;"> <!-- **수정된 부분** -->
                     <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i> <!-- Font Awesome 돋보기 아이콘 -->
+                        <i class="fas fa-search"></i>
                     </button>
-                    <div class="dropdown-menu w-100 position-absolute" id="autocompleteDropdown" style="top: 100%; left: 0; z-index: 1000;"></div>
                 </div>
             </form>
         </div>
         <!-- 로그인 및 회원가입 -->
-        <div class="d-flex">
-            <a class="btn btn-outline-primary me-2 align-items-center" href="#login" th:href="@{/login}">로그인</a>
-            <a class="btn btn-outline-primary align-items-center" href="#signup" th:href="@{/members/add}">회원가입</a>
+        <div class="d-flex align-items-center gap-2 flex-shrink-0"> <!-- **수정된 부분** -->
+            <a class="btn btn-outline-primary me-2" href="#login" th:href="@{/login}">로그인</a>
+            <a class="btn btn-outline-primary" href="#signup" th:href="@{/members/add}">회원가입</a>
         </div>
     </div>
 </nav>
