@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/fragment/layout/base}">
-</head>
+<head th:replace="~{/fragment/layout/base}"></head>
 <body>
 <!-- 상단 -->
 <nav class="navbar bg-white bg-light static-top">
@@ -23,121 +22,9 @@
     </div>
 </header>
 
-<footer th:replace="~{/fragment/footer/footer :: footer(${member})}">
+<footer th:replace="~{/fragment/footer/footer :: footer(${member})}"></footer>
 
-</footer>
 <div th:replace="~{/fragment/script/searchDropdownScript}"></div>
-<script>
-
-    // 페이지 로드 시 북마크 목록과 아이콘 클릭 유무를 가져와서 표시하는 함수 호출
-    document.addEventListener("DOMContentLoaded", function () {
-        fetchFavorites();
-    });
-
-    document.getElementById("bookmark-button").addEventListener("click", function () {
-        fetch("/members/getFavorites", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    updateFavoritesDropdown(data.favorites);
-                } else {
-                    console.error("북마크 목록을 불러오는데 실패했습니다.")
-                }
-            })
-            .catch(error => console.error("Error:", error));
-    });
-
-
-    // 북마크 DB 조회 -> 북마크 지역 Set 으로 돌려줌
-    function fetchFavorites() {
-        fetch("/members/getFavorites", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // MY 관심지역 드롭다운에 Set에 담긴 지역 출력
-                    updateFavoritesDropdown(data.favorites);
-                    // 북마크 지역 등록된 곳 좋아요 꽉찬 하트로 설정
-                    updateFavoriteIcon(data.favorites);
-                } else {
-                    console.error("북마크 목록을 불러오는 데 실패했습니다.");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-    }
-
-    function updateFavoritesDropdown(favorites) {
-        const dropdown = document.getElementById("bookmarkDropdown");
-        dropdown.innerHTML = ""; // 드롭다운 초기화
-
-        // 각 북마크를 드롭다운 아이템으로 추가
-        favorites.forEach(favorite => {
-
-            //MY 관심지역 아이템 클릭시 바로 검색
-            let item = document.createElement('a');
-            item.classList.add('dropdown-item');
-            item.textContent = favorite;
-            item.style.cursor = 'pointer'; // 클릭 가능한 포인터
-            item.addEventListener('click', function () {
-                document.getElementById('searchBox').value = favorite;
-                dropdown.classList.remove('show');
-                document.getElementById('searchForm').submit();
-            });
-            dropdown.appendChild(item);
-        });
-    }
-
-    function updateFavoriteIcon(favorites) {
-        const stationName = document.getElementById('stationName').textContent;
-        const favoriteIcon = document.getElementById('favoriteIcon');
-
-        // 즐겨찾기 상태 확인
-        favorites.forEach(favorite => {
-            // 현재 측정소명이 즐겨찾기 목록에 있으면 꽉 찬 하트 아이콘으로 설정
-            if (favorite.includes(stationName)) {
-                favoriteIcon.classList.remove('fa-regular');
-                favoriteIcon.classList.add('fa-solid');
-            }
-        });
-    }
-
-
-    document.getElementById('favoriteIcon').addEventListener('click', function () {
-        // 아이콘 상태 변경
-        this.classList.toggle('fa-regular');
-        this.classList.toggle('fa-solid');
-
-        // 아이콘 상태와 측정소명 가져오기
-        const stationName = document.getElementById('stationName').textContent;
-        const isFavorite = this.classList.contains('fa-solid'); // 꽉 찬 하트면 true
-
-        // AJAX 요청 보내기
-        fetch('/members/toggleFavorite', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                stationName: stationName,
-                favorite: isFavorite
-            })
-        })
-            .then(response => response.text())
-            .then(data => {
-                console.log('즐겨찾기 상태 업데이트:', data);
-            })
-            .catch(error => console.error('에러 발생:', error));
-    });
-
-</script>
+<div th:replace="~{/fragment/script/bookmarkScript}"></div>
 </body>
 </html>

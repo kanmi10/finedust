@@ -1,0 +1,56 @@
+<script th:fragment="searchDropdownScript">
+    // 사용자가 입력 필드에 키보드를 입력할 때(input 이벤트) 실행되는 이벤트 리스너
+    document.getElementById('searchBox').addEventListener('input', function () {
+
+        // 입력 필드에 사용자가 입력한 값
+        const searchWord = this.value;
+
+        // 검색어의 길이가 0보다 클때
+        if (searchWord.length > 0) {
+            // 자바스크립트의 fetch API를 사용, AJAX 요청을 서버로 보냄
+            fetch(`/searchStations?stationName=${searchWord}`)
+                // 서버에서 JSON으로 변환 가능한 데이터를 받을 경우, 자바스크립트 객체로 변환
+                .then(response => response.json())
+                // JSON으로 변환된 데이터를 가지고 드롭다운 메뉴에 항목을 추가하는 로직
+                .then(data => {
+                    // 드롭다운 메뉴로 사용할 div 요소를 가져오기
+                    let dropdown = document.getElementById('autocompleteDropdown');
+                    dropdown.innerHTML = '';  // 기존 항목 초기화
+                    //서버로부터 받은 측정소 이름 목록이 0보다 큰지 확인
+                    if (data.length > 0) {
+                        // 검색 결과 배열(data)에서 각 측정소 이름을 반복 처리
+                        data.forEach(station => {
+                            //새로운 li 태그를 만듦
+                            let item = document.createElement('a');
+                            item.classList.add('dropdown-item');
+                            item.textContent = station;
+                            item.style.cursor = 'pointer'; // 클릭 가능한 포인터
+                            item.addEventListener('click', function () {
+                                document.getElementById('searchBox').value = station;
+                                dropdown.classList.remove('show');
+                                document.getElementById('searchForm').submit();
+                            });
+                            dropdown.appendChild(item);
+                        });
+                        dropdown.classList.add('show');  // 드롭다운 표시
+                    } else {
+                        dropdown.classList.remove('show');
+                    }
+                });
+        } else {
+            //검색어의 길이가 0보다 작을 때는 드롭다운 표시 X
+            document.getElementById('autocompleteDropdown').classList.remove('show');
+        }
+    });
+
+    //다른 곳을 클릭했을 때 드롭다운 박스를 닫기 위한 이벤트 리스너
+    document.addEventListener('click', function (event) {
+        let dropdown = document.getElementById('autocompleteDropdown');
+        let searchBox = document.getElementById('stationSearch');
+
+        //클릭한 요소가 검색창이나 드롭다운 항목이 아니면 드롭다운 닫기,
+        if (!dropdown.contains(event.target) && event.target !== searchBox) {
+            dropdown.classList.remove('show');
+        }
+    });
+</script>

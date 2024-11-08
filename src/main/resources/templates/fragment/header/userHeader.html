@@ -1,0 +1,10 @@
+<!-- 로그인 UI -->
+<div th:fragment="userHeader(member)">
+    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+        <span class="fs-5 fw-bold" th:text="|${member.name}님|"></span>
+        <span class="fs-6" th:text="|(${member.loginId})|"></span>
+        <form th:action="@{/logout}" method="POST">
+            <button class="btn btn-dark btn-sm" type="submit" th:text="#{label.logout}">로그아웃</button>
+        </form>
+    </div>
+</div>

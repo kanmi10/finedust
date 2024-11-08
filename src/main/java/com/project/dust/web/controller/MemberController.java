@@ -93,6 +93,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 
+        //측정소명과 좋아요 상태 가져옴
         String stationName = (String) payload.get("stationName");
         boolean isFavorite = (Boolean) payload.get("favorite");
 
@@ -100,8 +101,10 @@ public class MemberController {
 
         //사용자 즐겨찾기 버튼 클릭 유무
         if (isFavorite) {
+            // 꽉찬 하트로 변경되면 북마크 추가
             memberService.addFavorite(member.getId(), stationName);
         } else {
+            // 빈 하트로 변경시 북마크 삭제
             memberService.removeFavorite(member.getId(), stationName);
         }
 
@@ -123,6 +126,7 @@ public class MemberController {
         Set<String> favorites = memberService.getFavorite(member.getId());
         response.put("success", true);
         response.put("favorites", favorites);
+        log.info("favorites={}", favorites);
         return response;
     }
 

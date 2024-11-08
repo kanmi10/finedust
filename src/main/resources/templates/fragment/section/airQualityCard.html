@@ -1,0 +1,128 @@
+<div th:fragment="airQualityCard(dust)">
+    <!-- 대기오염 카드 -->
+    <div class="d-flex justify-content-evenly">
+        <!-- 미세먼지 카드 -->
+        <div class="card w-25 text-bg-primary" th:classappend=
+                "${dust.pm10Value > 150} ? 'text-bg-dark' :
+                    (${dust.pm10Value > 80} ? 'text-bg-danger' :
+                    (${dust.pm10Value > 30} ? 'text-bg-success' :
+                    (${dust.pm10Value >= 0} ? 'text-bg-primary' : 'text-bg-secondary')))">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <h4>미세먼지</h4>
+                <th:block th:if="${dust.pm10Value >= 0} and ${dust.pm10Value <= 30}">
+                    <p class="card-text"><i class="fa-solid fa-face-laugh-squint mb-1" style="font-size: 100px"></i>
+                    </p>
+                    <h2 class="card-text" th:text="#{label.dust.good}">좋음</h2>
+                    <p class="card-text" th:text="${dust.pm10Value} + '㎍/㎥'">18㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.good.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm10Value > 30} and ${dust.pm10Value <= 80}">
+                    <p class="card-text"><i class="fa-solid fa-face-meh mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.moderate}">보통</h2>
+                    <p class="card-text" th:text="${dust.pm10Value} + '㎍/㎥'">48㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.moderate.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm10Value > 80} and ${dust.pm10Value <= 150}">
+                    <p><i class="fa-solid fa-face-tired mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.unhealthy}">나쁨</h2>
+                    <p class="card-text" th:text="${dust.pm10Value} + '㎍/㎥'">88㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.unhealthy.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm10Value > 150}">
+                    <p><i class="fa-solid fa-face-dizzy mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.hazardous}">매우나쁨</h2>
+                    <p class="card-text" th:text="${dust.pm10Value} + '㎍/㎥'">158㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.hazardous.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm10Value == null}">
+                    <p class="card-text"><i class="fa-solid fa-face-flushed mb-1" style="font-size: 100px"></i>
+                    <h2 class="card-text" th:text="#{label.dust.null}">점검중</h2>
+                    <p class="card-text" th:text="${dust.pm10Value}?:'--' + '㎍/㎥'">18㎍/㎥</p>
+                    <p class="card-text">--</p>
+                </th:block>
+            </div>
+        </div>
+        <!-- 초미세먼지 카드 -->
+        <div class="card w-25 text-bg-primary" th:classappend=
+                "${dust.pm25Value > 75} ? 'text-bg-dark' :
+                    (${dust.pm25Value > 35} ? 'text-bg-danger' :
+                    (${dust.pm25Value > 15} ? 'text-bg-success' :
+                    (${dust.pm25Value >= 0} ? 'text-bg-primary' : 'text-bg-secondary')))">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <h4>초미세먼지</h4>
+                <th:block th:if="${dust.pm25Value >= 0} and ${dust.pm25Value <= 15}">
+                    <p class="card-text"><i class="fa-solid fa-face-laugh-squint mb-1" style="font-size: 100px"></i>
+                    </p>
+                    <h2 class="card-text" th:text="#{label.dust.good}">좋음</h2>
+                    <p class="card-text" th:text="${dust.pm25Value} + '㎍/㎥'">18㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.good.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm25Value > 15} and ${dust.pm25Value <= 35}">
+                    <p class="card-text"><i class="fa-solid fa-face-meh mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.moderate}">보통</h2>
+                    <p class="card-text" th:text="${dust.pm25Value} + '㎍/㎥'">48㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.moderate.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm25Value > 35} and ${dust.pm25Value <= 75}">
+                    <p><i class="fa-solid fa-face-tired mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.unhealthy}">나쁨</h2>
+                    <p class="card-text" th:text="${dust.pm25Value} + '㎍/㎥'">88㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.unhealthy.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm25Value > 75}">
+                    <p><i class="fa-solid fa-face-dizzy mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.hazardous}">매우나쁨</h2>
+                    <p class="card-text" th:text="${dust.pm25Value} + '㎍/㎥'">158㎍/㎥</p>
+                    <p class="card-text" th:text="#{label.dust.hazardous.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.pm25Value == null}">
+                    <p class="card-text"><i class="fa-solid fa-face-flushed mb-1" style="font-size: 100px"></i>
+                    <h2 class="card-text" th:text="#{label.dust.null}">점검중</h2>
+                    <p class="card-text" th:text="${dust.pm25Value}?:'--' + '㎍/㎥'">18㎍/㎥</p>
+                    <p class="card-text">--</p>
+                </th:block>
+            </div>
+        </div>
+        <!-- 이산화질소 카드 -->
+        <div class="card w-25 text-bg-primary" th:classappend=
+                "${dust.no2Value > 0.15} ? 'text-bg-dark' :
+                    (${dust.no2Value > 0.09} ? 'text-bg-danger' :
+                    (${dust.no2Value > 0.03} ? 'text-bg-success' :
+                    (${dust.no2Value >= 0} ? 'text-bg-primary' : 'text-bg-secondary')))">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <h4>이산화질소</h4>
+                <th:block th:if="${dust.no2Value >= 0} and ${dust.no2Value <= 0.03}">
+                    <p class="card-text"><i class="fa-solid fa-face-laugh-squint mb-1" style="font-size: 100px"></i>
+                    </p>
+                    <h2 class="card-text" th:text="#{label.dust.good}">좋음</h2>
+                    <p class="card-text" th:text="${dust.no2Value} + 'ppm'">0.01ppm</p>
+                    <p class="card-text" th:text="#{label.dust.good.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.no2Value > 0.03} and ${dust.no2Value <= 0.09}">
+                    <p class="card-text"><i class="fa-solid fa-face-meh mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.moderate}">보통</h2>
+                    <p class="card-text" th:text="${dust.no2Value} + 'ppm'">0.04ppm</p>
+                    <p class="card-text" th:text="#{label.dust.moderate.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.no2Value > 0.09} and ${dust.no2Value <= 0.15}">
+                    <p><i class="fa-solid fa-face-tired mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.unhealthy}">나쁨</h2>
+                    <p class="card-text" th:text="${dust.no2Value} + 'ppm'">0.1ppm</p>
+                    <p class="card-text" th:text="#{label.dust.unhealthy.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.no2Value > 0.15}">
+                    <p><i class="fa-solid fa-face-dizzy mb-1" style="font-size: 100px"></i></p>
+                    <h2 class="card-text" th:text="#{label.dust.hazardous}">매우나쁨</h2>
+                    <p class="card-text" th:text="${dust.no2Value} + 'ppm'">0.16ppm</p>
+                    <p class="card-text" th:text="#{label.dust.hazardous.comment}">멘트</p>
+                </th:block>
+                <th:block th:if="${dust.no2Value == null}">
+                    <p class="card-text"><i class="fa-solid fa-face-flushed mb-1" style="font-size: 100px"></i>
+                    <h2 class="card-text" th:text="#{label.dust.null}">점검중</h2>
+                    <p class="card-text" th:text="${dust.no2Value}?:'--' + 'ppm'">0.18ppm</p>
+                    <p class="card-text">--</p>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
