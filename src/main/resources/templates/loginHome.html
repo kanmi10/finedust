@@ -52,38 +52,6 @@
     </div>
 </nav>
 
-<!--<nav class="navbar bg-white bg-light static-top">
-    <div class="container d-flex justify-content-between align-items-center">
-        &lt;!&ndash; 로고 및 검색 폼 &ndash;&gt;
-        <div class="d-flex">
-            <a class="navbar-brand" href="#!" th:href="@{/}">
-                <img class="align-items-center me-3" style="width: 120px; height: 50px;"
-                     src="/assets/img/today_dust_logo.png" alt="미세먼지 로고">
-            </a>
-            <form id="searchForm" class="d-flex align-items-center" th:action="@{/search}" th:method="GET">
-                <div class="input-group position-relative">
-                    <input id="searchBox" class="form-control" style="width: 500px" name="searchWord" type="search"
-                           placeholder="지역명 또는 측정소명을 검색해보세요!" autocomplete="off">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i> &lt;!&ndash; Font Awesome 돋보기 아이콘 &ndash;&gt;
-                    </button>
-                    <div class="dropdown-menu w-100 position-absolute" id="autocompleteDropdown"
-                         style="top: 100%; left: 0; z-index: 1000;">
-                    </div>
-                </div>
-            </form>
-        </div>
-        &lt;!&ndash; 로그인 완료 UI &ndash;&gt;
-        <div class="d-flex align-items-center gap-2">
-            <span class="fs-5 fw-bold" th:text="|${member.name}님|"></span>
-            <span class="fs-6" th:text="|(${member.loginId})|"></span>
-            <form th:action="@{/logout}" method="POST">
-                <button class="w-100 btn btn-dark btn-sm" type="submit" th:text="#{label.logout}">로그아웃</button>
-            </form>
-        </div>
-    </div>
-</nav>-->
-
 <!-- Masthead-->
 <header class="masthead" style="padding-bottom: 5rem; padding-top: 5rem;">
     <div class="container position-relative">
@@ -93,10 +61,13 @@
             <h3 id="sidoName" class="text-light ms-2" th:text="${dust.sidoName} + ' > '">서울</h3>
             <h3 id="stationName" class="text-light ms-2" th:text="${dust.stationName}">중구</h3>
             <!-- 즐겨찾기 아이콘 -->
-                <i id="favoriteIcon" class="fa-heart fa-regular ms-3 text-danger btn" style="font-size: 1.5rem; outline: none;"></i>
+            <i id="favoriteIcon" class="fa-heart fa-regular ms-3 text-danger btn" style="font-size: 1.5rem; outline: none;"></i>
             <div class="dropdown">
                 <button class="btn btn-info dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     MY 관심지역
+                </button>
+                <button class="btn btn-secondary btn-sm" type="submit" th:onclick="|location.href='@{/board/list}'|">
+                    게시판
                 </button>
                 <!-- 북마크 드롭다운 메뉴 -->
                 <ul class="dropdown-menu" id="bookmarkDropdown">
@@ -388,7 +359,7 @@
                 }
             });
 
-    };
+    }
 
 
     document.getElementById('favoriteIcon').addEventListener('click', function () {
