@@ -5,7 +5,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -22,8 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.project.dust.connection.ConnectionConst.*;
-
 @Slf4j
 @Service
 public class DustService {
@@ -32,8 +29,8 @@ public class DustService {
     private static long sequence = 0L;
     private final DustRepository dustRepository;
 
-    public DustService() {
-        this.dustRepository = new JdbcDustRepository(new DriverManagerDataSource(URL, USERNAME, PASSWORD));
+    public DustService(DustRepository dustRepository) {
+        this.dustRepository = dustRepository;
     }
 
     // 같은 connection 사용해야 함.

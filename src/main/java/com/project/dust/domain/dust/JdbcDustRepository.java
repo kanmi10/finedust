@@ -2,9 +2,11 @@ package com.project.dust.domain.dust;
 
 import com.project.dust.connection.DBConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -16,6 +18,8 @@ import java.util.List;
 import static java.sql.Types.*;
 
 @Slf4j
+@Primary
+@Repository
 public class JdbcDustRepository implements DustRepository {
 
     private final DataSource dataSource;

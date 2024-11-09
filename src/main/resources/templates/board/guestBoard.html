@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/fragment/layout/base}"></head>
+<body>
+<!-- 상단 -->
+<nav class="navbar bg-white bg-light static-top">
+    <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+        <!-- 로고 및 검색 폼 -->
+        <div th:replace="~{/fragment/header/searchHeader}"></div>
+        <!-- 비로그인 유저 -->
+        <div th:replace="~{/fragment/header/guestHeader}"></div>
+
+    </div>
+</nav>
+
+<!-- Masthead-->
+<header class="masthead" style="padding-bottom: 5rem; padding-top: 5rem;">
+    <div class="container position-relative">
+
+    </div>
+</header>
+
+<!-- Footer-->
+<footer th:replace="~{/fragment/footer/footer :: footer(null)}"></footer>
+<script th:replace="~{/fragment/script/searchDropdownScript}"></script>
+</body>
+</html>

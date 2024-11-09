@@ -1,27 +1,22 @@
 package com.project.dust.domain.login;
 
-import com.project.dust.domain.member.JdbcMemberRepository;
 import com.project.dust.domain.member.Member;
 import com.project.dust.domain.member.MemberRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.util.NoSuchElementException;
 
-import static com.project.dust.connection.ConnectionConst.*;
-
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class LoginService {
 
     private final MemberRepository memberRepository;
 
-    public LoginService() {
-        this.memberRepository = new JdbcMemberRepository(new DriverManagerDataSource(URL, USERNAME, PASSWORD));
+    @Autowired
+    public LoginService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     /**

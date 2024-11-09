@@ -1,6 +1,7 @@
 package com.project.dust.domain.member;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
+@Primary
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
 
@@ -380,7 +382,6 @@ public class JdbcMemberRepository implements MemberRepository {
 
     private Connection getConnection() throws SQLException {
         Connection con = dataSource.getConnection();
-        //log.info("get connection={}, class={}", con, con.getClass());
         return con;
     }
 
