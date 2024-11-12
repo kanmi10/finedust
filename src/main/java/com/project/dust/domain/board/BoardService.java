@@ -2,6 +2,7 @@ package com.project.dust.domain.board;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
-
-    public BoardService(BoardRepository boardRepository) {
-        this.boardRepository = boardRepository;
-    }
 
     // Create
     public void createBoard(Board board) {
@@ -31,15 +29,15 @@ public class BoardService {
         return boardRepository.findAll();
     }
 
-    public List<Board> getBoardsByMemberId(Long memberId) {
+    public Optional<Board> getBoardsByMemberId(Long memberId) {
         return boardRepository.findByMemberId(memberId);
     }
 
-    public List<Board> getBoardsBySidoId(Long sidoId) {
+    public Optional<Board> getBoardsBySidoId(Long sidoId) {
         return boardRepository.findBySidoId(sidoId);
     }
 
-    public List<Board> searchBoardsByTitle(String keyword) {
+    public Optional<Board> searchBoardsByTitle(String keyword) {
         return boardRepository.searchByTitle(keyword);
     }
 

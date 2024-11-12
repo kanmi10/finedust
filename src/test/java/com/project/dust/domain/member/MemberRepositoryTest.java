@@ -3,16 +3,19 @@ package com.project.dust.domain.member;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.util.Optional;
 
-import static com.project.dust.connection.ConnectionConst.*;
 
 @Slf4j
+@SpringBootTest
 class MemberRepositoryTest {
 
-    MemberRepository memberRepository = new JdbcMemberRepository(new DriverManagerDataSource(URL, USERNAME, PASSWORD));
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     void crud() {

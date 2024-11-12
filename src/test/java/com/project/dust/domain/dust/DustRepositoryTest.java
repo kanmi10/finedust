@@ -1,7 +1,5 @@
 package com.project.dust.domain.dust;
 
-import com.project.dust.connection.ConnectionConst;
-import com.project.dust.connection.DBConnectionUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -11,11 +9,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.project.dust.connection.ConnectionConst.*;
 
 class DustRepositoryTest {
 
-    DustRepository repository = new JdbcDustRepository(new DriverManagerDataSource(URL, USERNAME, PASSWORD));
 
     @Test
     void crud() throws SQLException {

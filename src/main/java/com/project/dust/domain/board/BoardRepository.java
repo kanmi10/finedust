@@ -10,9 +10,9 @@ public interface BoardRepository {
     // Read
     Optional<Board> findById(Long boardId);
     List<Board> findAll();
-    List<Board> findByMemberId(Long memberId);
-    List<Board> findBySidoId(Long sidoId);
-    List<Board> searchByTitle(String keyword);
+    Optional<Board> findByMemberId(Long memberId);
+    Optional<Board> findBySidoId(Long sidoId);
+    Optional<Board> searchByTitle(String keyword);
 
     // Update
     void update(Board board);

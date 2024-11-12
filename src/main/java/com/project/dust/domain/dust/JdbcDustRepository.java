@@ -1,6 +1,5 @@
 package com.project.dust.domain.dust;
 
-import com.project.dust.connection.DBConnectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.support.JdbcUtils;
@@ -39,7 +38,7 @@ public class JdbcDustRepository implements DustRepository {
         PreparedStatement pstmt = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
 
             for (Dust dust : dusts) {
@@ -104,7 +103,7 @@ public class JdbcDustRepository implements DustRepository {
         ResultSet rs = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, search);
             rs = pstmt.executeQuery();
@@ -146,7 +145,7 @@ public class JdbcDustRepository implements DustRepository {
         ResultSet rs = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, stationName + "%");
             rs = pstmt.executeQuery();
@@ -178,7 +177,7 @@ public class JdbcDustRepository implements DustRepository {
         PreparedStatement pstmt = null;
 
         try {
-            con = DBConnectionUtil.getConnection();
+            con = getConnection();
             pstmt = con.prepareStatement(sql);
 
             for (Dust dust : dusts) {
