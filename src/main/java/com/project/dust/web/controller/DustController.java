@@ -5,7 +5,6 @@ import com.project.dust.domain.dust.DustService;
 import com.project.dust.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -56,7 +54,7 @@ public class DustController {
         }
 
         model.addAttribute("member", member);
-        return "loginHome";
+        return "home";
     }
 
     /**

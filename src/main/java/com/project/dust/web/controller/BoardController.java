@@ -30,7 +30,7 @@ public class BoardController {
 
         //로그인을 안한 회원
         if (member == null) {
-            return "board/guestBoard";
+            return "board/memberBoard";
         }
 
         model.addAttribute("member", member);

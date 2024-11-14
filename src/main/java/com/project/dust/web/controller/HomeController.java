@@ -10,8 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.util.Set;
-
 import static com.project.dust.web.SessionConst.*;
 
 @Slf4j
@@ -22,8 +20,7 @@ public class HomeController {
     private final DustService dustService;
 
     @GetMapping("/")
-    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
-                            Model model) {
+    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) {
         Dust dust = dustService.searchDust("중구");
         model.addAttribute("dust", dust);
 
@@ -33,7 +30,7 @@ public class HomeController {
         }
 
         model.addAttribute("member", member);
-        return "loginHome";
+        return "home";
     }
 
 

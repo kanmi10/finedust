@@ -1,0 +1,18 @@
+<!-- 로그인 UI -->
+<div th:fragment="userHeader(member)">
+    <div th:if="${member != null}" class="d-flex align-items-center gap-2 flex-shrink-0">
+        <span class="fs-5 fw-bold" th:text="|${member.name}님|"></span>
+        <span class="fs-6" th:text="|(${member.loginId})|"></span>
+        <form th:action="@{/logout}" method="POST">
+            <button class="btn btn-dark btn-sm" type="submit" th:text="#{label.logout}">로그아웃</button>
+        </form>
+    </div>
+
+    <!-- 비로그인 UI -->
+    <div th:if="${member == null}">
+        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <a class="btn btn-outline-primary me-2" href="#login" th:href="@{/login}">로그인</a>
+            <a class="btn btn-outline-primary" href="#signup" th:href="@{/members/add}">회원가입</a>
+        </div>
+    </div>
+</div>

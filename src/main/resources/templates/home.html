@@ -1,34 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragment/layout/base}">
-</head>
+<head th:replace="~{/fragment/layout/base}"></head>
 <body>
 <!-- 상단 -->
 <nav class="navbar bg-white bg-light static-top">
     <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-        <!-- 검색 바 -->
+        <!-- 로고 및 검색 폼 -->
         <div th:replace="~{/fragment/header/searchHeader}"></div>
-        <!-- 로그인 및 회원가입(게스트) -->
-        <div th:if="${member} == null" th:replace="~{/fragment/header/guestHeader}"></div>
+        <!-- 로그인 완료 UI -->
+        <div th:replace="~{/fragment/header/loginHeader :: userHeader(${member})}"></div>
     </div>
 </nav>
 
 <!-- Masthead-->
 <header class="masthead" style="padding-bottom: 5rem; padding-top: 5rem;">
     <div class="container position-relative">
-        <!-- 검색 지역 정보(게스트) -->
-        <div th:replace="~{/fragment/section/regionInfo :: regionInfo(${dust}, null)}"></div>
-
+        <!-- 검색 지역 정보 -->
+        <div th:replace="~{/fragment/section/regionInfo :: regionInfo(${dust}, ${member})}"></div>
         <!-- 미세먼지 카드 -->
         <div th:replace="~{/fragment/section/airQualityCard :: airQualityCard(${dust})}"></div>
     </div>
 </header>
 
-<!-- Footer-->
-<footer th:replace="~{/fragment/footer/footer :: footer(null)}">
-</footer>
-<!--검색어 자동완성 자바스크립트-->
-<script th:replace="~{/fragment/script/searchDropdownScript}">
-</script>
+<footer th:replace="~{/fragment/footer/footer :: footer(${member})}"></footer>
+
+<div th:replace="~{/fragment/script/searchDropdownScript}"></div>
+<div th:replace="~{/fragment/script/bookmarkScript}"></div>
 </body>
 </html>
