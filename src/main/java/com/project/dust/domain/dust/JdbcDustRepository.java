@@ -187,7 +187,7 @@ public class JdbcDustRepository implements DustRepository {
                 pstmt.setObject(4, dust.getNo2Value(), DOUBLE);
                 pstmt.setString(5, dust.getStationName());
                 pstmt.executeUpdate();
-                log.info("dust={}", dust);
+//                log.info("dust={}", dust);
             }
         } catch (SQLException e) {
             log.error("db error", e);

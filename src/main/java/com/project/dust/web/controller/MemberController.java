@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -89,9 +88,9 @@ public class MemberController {
     public ResponseEntity<String> toggleFavorite(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
                                  @RequestBody Map<String, Object> payload) {
 
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
+//        if (member == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+//        }
 
         //측정소명과 좋아요 상태 가져옴
         String stationName = (String) payload.get("stationName");
@@ -117,11 +116,11 @@ public class MemberController {
         Map<String, Object> response = new HashMap<>();
 
         //회원X
-        if (member == null) {
-            response.put("success", false);
-            response.put("message", "회원이 아닙니다.");
-            return response;
-        }
+//        if (member == null) {
+//            response.put("success", false);
+//            response.put("message", "회원이 아닙니다.");
+//            return response;
+//        }
 
         Set<String> favorites = memberService.getFavorite(member.getId());
         response.put("success", true);

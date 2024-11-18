@@ -20,14 +20,15 @@ public class HomeController {
     private final DustService dustService;
 
     @GetMapping("/")
-    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) {
+    public String homeLogin(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                            Model model) {
         Dust dust = dustService.searchDust("중구");
         model.addAttribute("dust", dust);
 
         //세션에 회원 데이터가 없으면 home
-        if (member == null) {
-            return "home";
-        }
+//        if (member == null) {
+//            return "home";
+//        }
 
         model.addAttribute("member", member);
         return "home";

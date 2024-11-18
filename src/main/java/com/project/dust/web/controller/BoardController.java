@@ -27,15 +27,10 @@ public class BoardController {
     @GetMapping("/list")
     public String board(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) {
         List<Board> boards = boardService.getAllBoards();
+
         model.addAttribute("boards", boards);
-
-        //로그인을 안한 회원
-        if (member == null) {
-            return "board/list";
-        }
-
         model.addAttribute("member", member);
-        //로그인 안한 회원
+
         return "board/list";
     }
 
@@ -57,10 +52,10 @@ public class BoardController {
     @GetMapping("/add")
     public String addForm(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
                           @ModelAttribute("BoardForm") BoardForm form, Model model) {
-        if (member == null) {
-            log.info("로그인 필요");
-            return "redirect:/login";
-        }
+//        if (member == null) {
+//            log.info("로그인 필요");
+//            return "redirect:/login";
+//        }
 
         model.addAttribute("member", member);
         model.addAttribute("form", form);
@@ -76,7 +71,6 @@ public class BoardController {
             log.info("errors={}", bindingResult);
             return "board/addForm";
         }
-
 
         Board board = new Board();
         board.setTitle(form.getTitle());
