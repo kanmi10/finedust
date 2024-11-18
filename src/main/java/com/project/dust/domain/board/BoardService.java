@@ -59,4 +59,7 @@ public class BoardService {
         boardRepository.deleteAll();
     }
 
+    public Board findBoardById(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow();
+    }
 }

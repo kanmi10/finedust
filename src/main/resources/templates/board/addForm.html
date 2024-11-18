@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/fragment/layout/base}"></head>
+<body>
+<!-- 상단 -->
+<nav class="navbar bg-white bg-light static-top">
+    <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+        <!-- 로고 및 검색 폼 -->
+        <div th:replace="~{/fragment/header/searchHeader}"></div>
+        <!-- 로그인 유저 -->
+        <div th:replace="~{/fragment/header/loginHeader :: loginHeader(${member})}"></div>
+    </div>
+</nav>
+
+<div class="container">
+    <form th:method="POST" th:action th:object="${BoardForm}">
+        <div class="mb-3">
+            <label for="sidoId" class="form-label">시도명</label>
+            <select class="form-select form-select-sm" id="sidoId" th:field="*{sidoId}" style="width: 30%">
+                <option value="" disabled selected>시도를 선택하세요</option>
+            </select>
+        </div>
+        <!-- 제목 -->
+        <div class="mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" th:errorclass="border-danger" th:field="*{title}" class="form-control" id="title" placeholder="제목을 입력하세요">
+            <div class="text-danger" th:errors="*{title}">
+                제목을 입력해주세요.
+            </div>
+        </div>
+
+        <!-- 내용 -->
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" th:errorclass="border-danger" th:field="*{content}" id="content" rows="5" placeholder="내용을 입력하세요"></textarea>
+            <div class="text-danger" th:errors="*{content}">
+                내용을 입력해주세요.
+            </div>
+        </div>
+
+        <!-- 버튼 그룹 -->
+        <div class="d-flex justify-content-end">
+            <button type="reset" class="btn btn-secondary me-2">초기화</button>
+            <button type="submit" class="btn btn-primary">등록</button>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- Footer-->
+<footer th:replace="~{/fragment/footer/footer :: footer(${member})}"></footer>
+<script th:replace="~{/fragment/script/searchDropdownScript}"></script>
+<script>
+    /**
+     * 페이지 로드 시 시도명 selectBox 옵션 초기화
+     */
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/getSidoNames", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("data", data);
+                    const selectBox = document.getElementById("sidoId");
+
+                    //Map 데이터를 순회
+                    Object.entries(data.data).forEach(([sidoId, sidoName]) => {
+                        const option = document.createElement("option");
+                        option.value = sidoId;
+                        option.textContent = sidoName;
+                        selectBox.appendChild(option);
+                    });
+                }
+            }).catch(error => {
+                console.error("시도명 데이터를 가져오는 중 문제가 발생했습니다.", error);
+                alert("시도명 데이터를 불러오는데 실패했습니다.");
+        });
+    });
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -27,6 +28,11 @@ public class MemoryDustRepository implements DustRepository {
     @Override
     public void update(List<Dust> dusts) {
 
+    }
+
+    @Override
+    public Map<Long, String> findAllSidoNames() {
+        return Map.of();
     }
 
 

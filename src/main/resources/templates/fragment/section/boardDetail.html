@@ -1,0 +1,29 @@
+<div class="container mt-5" th:fragment="boardDetail(board, member)">
+    <!-- 게시물 상세 정보 카드 -->
+    <div class="card">
+        <form th:method="GET">
+        <div class="card-header text-bg-secondary d-flex align-items-center">
+            <h3 class="card-title mb-0" th:text="${board.title}">게시물 제목</h3>
+            <button type="button" class="btn btn-sm btn-info" th:onclick="|location.href='@{/board/update/{boardId}(boardId=${board.boardId})}'|">수정</button>
+        </div>
+        </form>
+
+        <div class="card-body">
+            <!-- 게시물 정보 섹션 -->
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <span class="h5 me-2" th:text="${board.name}">작성자</span>
+                    <span class="text-secondary h6" th:text="${#temporals.format(board.created_date, '작성일시: yyyy-MM-dd a hh:mm')}">2024년 11월 14일</span>
+                </li>
+                <li class="list-group-item">
+                    <p th:text="${board.content}" class="mt-2">
+                        서울 지역의 미세먼지 수치가 높은 상태입니다. 주의하시기 바랍니다.
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer text-end">
+            <a href="/" class="btn btn-secondary">목록으로 돌아가기</a>
+        </div>
+    </div>
+</div>

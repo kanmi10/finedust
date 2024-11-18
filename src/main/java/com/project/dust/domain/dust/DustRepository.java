@@ -1,6 +1,7 @@
 package com.project.dust.domain.dust;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DustRepository {
 
@@ -11,4 +12,6 @@ public interface DustRepository {
     List<String> findByStationName(String stationName);
 
     void update(List<Dust> dusts);
+
+    Map<Long, String> findAllSidoNames();
 }

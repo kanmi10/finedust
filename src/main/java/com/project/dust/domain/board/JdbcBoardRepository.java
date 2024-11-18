@@ -67,8 +67,10 @@ public class JdbcBoardRepository implements BoardRepository {
                 "         from MEMBER\n" +
                 "         where BOARD.memberId = MEMBER.memberId) name,\n" +
                 "    title,\n" +
-                "    content\n" +
-                "from BOARD";
+                "    content,\n" +
+                "    created_date\n" +
+                "from BOARD\n" +
+                "order by boardId desc";
 
         List<Board> boards = new ArrayList<>();
 
@@ -91,7 +93,8 @@ public class JdbcBoardRepository implements BoardRepository {
                 board.setTitle(rs.getString("title"));
                 board.setContent(rs.getString("content"));
 
-                log.info("board={}", board);
+                Timestamp createdTime = rs.getTimestamp("created_date");
+                board.setCreated_date(createdTime.toLocalDateTime());
 
                 boards.add(board);
             }

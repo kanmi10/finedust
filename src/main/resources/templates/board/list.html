@@ -8,13 +8,16 @@
         <!-- 로고 및 검색 폼 -->
         <div th:replace="~{/fragment/header/searchHeader}"></div>
         <!-- 로그인 유저 -->
-        <div th:replace="~{/fragment/header/loginHeader :: userHeader(${member})}"></div>
+        <div th:replace="~{/fragment/header/loginHeader :: loginHeader(${member})}"></div>
     </div>
 </nav>
 
 <!-- Masthead-->
-<header class="masthead" style="padding-bottom: 5rem; padding-top: 5rem;">
+<header class="masthead" style="padding-bottom: 5rem; padding-top: 2em;">
     <div class="container position-relative">
+        <div class="d-flex justify-content-end mb-1">
+        <button class="btn btn-sm btn-dark" type="button" th:onclick="|location.href='@{/board/add}'|">글쓰기</button>
+        </div>
         <table class="table table-hover table-secondary">
             <thead class="text-center">
             <tr>
@@ -22,18 +25,14 @@
                 <th>제목</th>
                 <th>글쓴이</th>
                 <th>작성일</th>
-                <th>조회</th>
-                <th>추천</th>
             </tr>
             </thead>
             <tbody class="table-group-divider">
-            <tr th:each="board : ${boards}">
+            <tr th:each="board : ${boards}" th:onclick="|location.href='@{/board/detail/}' + ${board.boardId}|" style="cursor: pointer">
                 <td class="text-center" th:text="${board.boardId}"></td>
                 <td th:text="${board.title}"></td>
                 <td class="text-center" th:text="${board.name}"></td>
-                <td class="text-center">2024-11-12</td>
-                <td class="text-center">1,110</td>
-                <td class="text-center">2,432</td>
+                <td class="text-center" th:text="${#temporals.format(board.created_date, 'yyyy-MM-dd a hh:mm')}">2024-11-12</td>
             </tr>
             </tbody>
         </table>
@@ -44,10 +43,5 @@
 <!-- Footer-->
 <footer th:replace="~{/fragment/footer/footer :: footer(${member})}"></footer>
 <script th:replace="~{/fragment/script/searchDropdownScript}"></script>
-<script>
-    document.getElementById('board').addEventListener('click', function (){
-       alert("클릭!");
-    });
-</script>
 </body>
 </html>

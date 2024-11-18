@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -212,8 +213,12 @@ public class DustService {
         }
     }
 
-    public List<String> findStationsByName(String stationName) throws SQLException {
+    public List<String> findStationsByName(String stationName) {
         return dustRepository.findByStationName(stationName);
+    }
+
+    public Map<Long, String> fetchSidoNames() {
+        return dustRepository.findAllSidoNames();
     }
 
 }

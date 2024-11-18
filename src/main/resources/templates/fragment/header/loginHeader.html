@@ -1,5 +1,5 @@
 <!-- 로그인 UI -->
-<div th:fragment="userHeader(member)">
+<div th:fragment="loginHeader(member)">
     <div th:if="${member != null}" class="d-flex align-items-center gap-2 flex-shrink-0">
         <span class="fs-5 fw-bold" th:text="|${member.name}님|"></span>
         <span class="fs-6" th:text="|(${member.loginId})|"></span>

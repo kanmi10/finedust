@@ -2,6 +2,8 @@ package com.project.dust.domain.board;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class Board {
 
@@ -16,4 +18,5 @@ public class Board {
     private String title;
     private String content;
 
+    private LocalDateTime created_date;
 }

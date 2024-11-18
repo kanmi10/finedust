@@ -12,7 +12,9 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.sql.Types.*;
 
@@ -154,8 +156,6 @@ public class JdbcDustRepository implements DustRepository {
                 stationsNames.add(rs.getString("stationName"));
             }
 
-//            log.info("stations={}", stationsNames);
-
             return stationsNames;
 
         } catch (SQLException e) {
@@ -194,6 +194,38 @@ public class JdbcDustRepository implements DustRepository {
             throw exTranslator.translate("update", sql, e);
         } finally {
             close(con, pstmt, null);
+        }
+    }
+
+    /**
+     * 모든 시도명 조회
+     * @return 모든 시도명
+     */
+    @Override
+    public Map<Long, String> findAllSidoNames() {
+        String sql = "select * from REGION";
+
+        Map<Long, String> sidoNames = new HashMap<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                sidoNames.put(rs.getLong("sidoId"), rs.getString("sidoName"));
+            }
+
+            return sidoNames;
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw exTranslator.translate("findAllSidoNames", sql, e);
+        } finally {
+            close(con, pstmt, rs);
         }
     }
 

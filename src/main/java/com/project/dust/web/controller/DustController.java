@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
@@ -24,13 +25,6 @@ import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 public class DustController {
 
     private final DustService dustService;
-
-   /* @GetMapping("/dust")
-    @ResponseBody
-    public String dust() throws IOException, ParseException, SQLException {
-        dustService.init();
-        return "ok";
-    }*/
 
     /**
      * 측정소 검색 기능
@@ -64,8 +58,17 @@ public class DustController {
      */
     @ResponseBody
     @GetMapping("/searchStations")
-    public List<String> searchStations(@RequestParam("stationName") String stationName) throws SQLException {
+    public List<String> searchStations(@RequestParam("stationName") String stationName) {
         return dustService.findStationsByName(stationName);
+    }
+
+    @ResponseBody
+    @GetMapping("/getSidoNames")
+    public Map<String, Object> getSidoNames() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", dustService.fetchSidoNames());
+        return response;
     }
 
 }
