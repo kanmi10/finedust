@@ -157,7 +157,22 @@ public class JdbcBoardRepository implements BoardRepository {
 
     @Override
     public void deleteById(Long boardId) {
+        String sql = "delete from BOARD where boardId = ?";
 
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, boardId);
+            pstmt.executeUpdate();
+            log.info("게시글 삭제 완료");
+        } catch (SQLException e) {
+            throw exTranslator.translate("delete", sql, e);
+        } finally {
+            close(con, pstmt, null);
+        }
     }
 
     @Override

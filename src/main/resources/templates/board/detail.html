@@ -21,5 +21,44 @@
 <!-- Footer-->
 <footer th:replace="~{/fragment/footer/footer :: footer(${member})}"></footer>
 <script th:replace="~{/fragment/script/searchDropdownScript}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButton = document.getElementById("delete-button");
+        const deleteModal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
+        const confirmDeleteButton = document.getElementById("confirm-delete");
+
+        // 삭제 버튼 클릭 시 모달 표시
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function () {
+                deleteModal.show();
+            });
+        }
+
+        // "삭제하기" 버튼 클릭 시 컨트롤러 호출
+        confirmDeleteButton.addEventListener('click', function () {
+            const boardId = [[${board.boardId}]];// 게시글 ID 가져오기
+            console.log("게시글 ID: ", boardId);
+
+            fetch(`/board/delete/${boardId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("게시글이 삭제되었습니다.");
+                        window.location.href = "/board/list"; // 삭제 후 목록으로 이동
+                    } else {
+                        alert("게시글 삭제에 실패했습니다.");
+                    }
+                })
+                .catch(error => {
+                    console.error("삭제 요청 중 오류가 발생했습니다:", error);
+                    alert("오류가 발생했습니다. 다시 시도해주세요.");
+                });
+        });
+    });
+</script>
 </body>
 </html>

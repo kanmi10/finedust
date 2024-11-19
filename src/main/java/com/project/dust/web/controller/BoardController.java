@@ -5,7 +5,6 @@ import com.project.dust.domain.board.BoardEditForm;
 import com.project.dust.domain.board.BoardForm;
 import com.project.dust.domain.board.BoardService;
 import com.project.dust.domain.member.Member;
-import com.project.dust.domain.member.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 public class BoardController {
 
     private final BoardService boardService;
-    private final MemberService memberService;
 
     @GetMapping("/list")
     public String board(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
@@ -124,6 +122,10 @@ public class BoardController {
         return "redirect:/board/detail/" + boardEditForm.getBoardId();
     }
 
-
+    @PostMapping("/delete/{boardId}")
+    public String delete(@PathVariable("boardId") Long boardId) {
+        boardService.deleteBoardById(boardId);
+        return "redirect:/board/list";
+    }
 
 }

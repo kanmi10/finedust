@@ -1,14 +1,35 @@
 <div class="container mt-5" th:fragment="boardDetail(board, member)">
     <!-- 게시물 상세 정보 카드 -->
     <div class="card">
-        <form th:method="GET">
-            <div class="card-header text-bg-secondary d-flex align-items-center justify-content-between">
-                <div class="h3 card-title mb-0" th:text="${board.title}">게시물 제목</div>
-                <button th:if="${member != null} and ${member.id == board.memberId}" type="button" class="btn btn-sm btn-primary"
+        <div class="card-header text-bg-secondary d-flex align-items-center justify-content-between">
+            <div class="h3 card-title mb-0" th:text="${board.title}">게시물 제목</div>
+            <div th:if="${member != null} and ${member.id == board.memberId}" class="d-flex align-items-center">
+                <button type="button" class="btn btn-sm btn-primary me-1"
                         th:onclick="|location.href='@{/board/update/{boardId}(boardId=${board.boardId})}'|">수정
                 </button>
+                <button id="delete-button" type="submit" class="btn btn-sm btn-danger">삭제</button>
             </div>
-        </form>
+        </div>
+
+        <!-- 삭제 확인 모달 -->
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteConfirmModalLabel">게시글 삭제</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button>
+                        <button id="confirm-delete" type="button" class="btn btn-danger">삭제하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="card-body">
             <!-- 게시물 정보 섹션 -->
