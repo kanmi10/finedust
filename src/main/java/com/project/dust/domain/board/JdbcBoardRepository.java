@@ -130,7 +130,29 @@ public class JdbcBoardRepository implements BoardRepository {
 
     @Override
     public void update(Board board) {
+        String sql = "update BOARD\n" +
+                "set sidoId = ?, title = ?, content=?\n" +
+                "where boardId = ? and memberId = ?";
 
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, board.getSidoId());
+            pstmt.setString(2, board.getTitle());
+            pstmt.setString(3, board.getContent());
+            pstmt.setLong(4, board.getBoardId());
+            pstmt.setLong(5, board.getMemberId());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("update", sql, e);
+        } finally {
+            close(con, pstmt, null);
+        }
     }
 
     @Override

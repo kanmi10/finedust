@@ -1,9 +1,11 @@
 package com.project.dust.web.controller;
 
 import com.project.dust.domain.board.Board;
+import com.project.dust.domain.board.BoardEditForm;
 import com.project.dust.domain.board.BoardForm;
 import com.project.dust.domain.board.BoardService;
 import com.project.dust.domain.member.Member;
+import com.project.dust.domain.member.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +25,11 @@ import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 public class BoardController {
 
     private final BoardService boardService;
+    private final MemberService memberService;
 
     @GetMapping("/list")
-    public String board(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member, Model model) {
+    public String board(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                        Model model) {
         List<Board> boards = boardService.getAllBoards();
 
         model.addAttribute("boards", boards);
@@ -52,10 +56,6 @@ public class BoardController {
     @GetMapping("/add")
     public String addForm(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
                           @ModelAttribute("BoardForm") BoardForm form, Model model) {
-//        if (member == null) {
-//            log.info("로그인 필요");
-//            return "redirect:/login";
-//        }
 
         model.addAttribute("member", member);
         model.addAttribute("form", form);
@@ -64,8 +64,9 @@ public class BoardController {
     }
 
     @PostMapping("/add")
-    public String save(@Valid @ModelAttribute("BoardForm") BoardForm form, BindingResult bindingResult,
-                      @SessionAttribute(name = LOGIN_MEMBER, required = false) Member member) {
+    public String save(@Valid @ModelAttribute("BoardForm") BoardForm form,
+                       BindingResult bindingResult,
+                       @SessionAttribute(name = LOGIN_MEMBER, required = false) Member member) {
 
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
@@ -82,5 +83,47 @@ public class BoardController {
 
         return "redirect:/board/list";
     }
+
+    @GetMapping("/update/{boardId}")
+    public String editForm(@PathVariable("boardId") Long boardId,
+                           @SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                           Model model) {
+
+        Board board = boardService.findBoardById(boardId);
+
+        // 비회원이거나 자신의 게시물이 아니면 돌아가기
+        if (!board.getMemberId().equals(member.getId())) {
+            log.info("내 게시물 아님! 게시글 번호={}, 회원 번호={}", boardId, member.getId());
+            return "redirect:/board/list";
+        }
+
+        log.info("시도번호:{}", board.getSidoId());
+        log.info("시도명:{}", board.getSidoName());
+
+        model.addAttribute("boardForm", board);
+        model.addAttribute("member", member);
+
+        return "board/editForm";
+    }
+
+    @PostMapping("/update/{boardId}")
+    public String update(@ModelAttribute("boardForm") BoardEditForm boardEditForm,
+                         Model model) {
+
+        Board board = new Board();
+        board.setBoardId(boardEditForm.getBoardId());
+        board.setTitle(boardEditForm.getTitle());
+        board.setContent(boardEditForm.getContent());
+        board.setMemberId(boardEditForm.getMemberId());
+        board.setSidoId(boardEditForm.getSidoId());
+
+        boardService.updateBoard(board);
+
+        log.info("게시글 수정 완료!");
+
+        return "redirect:/board/detail/" + boardEditForm.getBoardId();
+    }
+
+
 
 }

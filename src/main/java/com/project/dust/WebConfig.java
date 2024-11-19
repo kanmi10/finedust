@@ -33,15 +33,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor()).order(1)
-                .addPathPatterns("/**");
+//        registry.addInterceptor(new LogInterceptor()).order(1)
+//                .addPathPatterns("/**");
 
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
-                .addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/", "/members/add", "/login", "/logout", "/searchStations", "/board/list", "/board/detail/*"
-                );
+                .addPathPatterns("/board/add",
+                        "/board/update/*",
+                        "/members/toggleFavorite",
+                        "/members/getFavorites");
     }
 
 

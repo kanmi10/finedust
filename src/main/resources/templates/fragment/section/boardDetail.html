@@ -2,18 +2,22 @@
     <!-- 게시물 상세 정보 카드 -->
     <div class="card">
         <form th:method="GET">
-        <div class="card-header text-bg-secondary d-flex align-items-center">
-            <h3 class="card-title mb-0" th:text="${board.title}">게시물 제목</h3>
-            <button type="button" class="btn btn-sm btn-info" th:onclick="|location.href='@{/board/update/{boardId}(boardId=${board.boardId})}'|">수정</button>
-        </div>
+            <div class="card-header text-bg-secondary d-flex align-items-center justify-content-between">
+                <div class="h3 card-title mb-0" th:text="${board.title}">게시물 제목</div>
+                <button th:if="${member != null} and ${member.id == board.memberId}" type="button" class="btn btn-sm btn-primary"
+                        th:onclick="|location.href='@{/board/update/{boardId}(boardId=${board.boardId})}'|">수정
+                </button>
+            </div>
         </form>
 
         <div class="card-body">
             <!-- 게시물 정보 섹션 -->
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <span class="h5 me-2" th:text="${board.name}">작성자</span>
-                    <span class="text-secondary h6" th:text="${#temporals.format(board.created_date, '작성일시: yyyy-MM-dd a hh:mm')}">2024년 11월 14일</span>
+                <li class="list-group-item align-items-center">
+                    <span class="h5 me-2" th:text="${board.name} + '님'">작성자</span>
+                    <button class="badge text-bg-success me-2" th:text="${board.sidoName}"></button>
+                    <span class="text-secondary h6"
+                          th:text="${#temporals.format(board.created_date, '작성일시: yyyy-MM-dd a hh:mm')}">2024년 11월 14일</span>
                 </li>
                 <li class="list-group-item">
                     <p th:text="${board.content}" class="mt-2">
@@ -23,7 +27,7 @@
             </ul>
         </div>
         <div class="card-footer text-end">
-            <a href="/" class="btn btn-secondary">목록으로 돌아가기</a>
+            <a href="/" class="btn btn-secondary" th:href="@{/board/list}">돌아가기</a>
         </div>
     </div>
 </div>
