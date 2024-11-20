@@ -10,6 +10,12 @@ public interface BoardRepository {
     // Read
     Optional<Board> findById(Long boardId);
     List<Board> findAll();
+
+    List<Board> findBoards(int limit, int offset);
+
+    int countBoards();
+
+
     Optional<Board> findByMemberId(Long memberId);
     Optional<Board> findBySidoId(Long sidoId);
     Optional<Board> searchByTitle(String keyword);

@@ -1,9 +1,6 @@
 package com.project.dust.web.controller;
 
-import com.project.dust.domain.board.Board;
-import com.project.dust.domain.board.BoardEditForm;
-import com.project.dust.domain.board.BoardForm;
-import com.project.dust.domain.board.BoardService;
+import com.project.dust.domain.board.*;
 import com.project.dust.domain.member.Member;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
@@ -26,9 +21,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/list")
-    public String board(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+    public String board(@RequestParam(defaultValue = "1") int page,
+                        @SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
                         Model model) {
-        List<Board> boards = boardService.getAllBoards();
+        int pageSize = 10; // 페이지당 게시물 수
+
+        // 사용자가 요청하는 페이지 번호(page)와 페이지당 게시물 수를 인수로 넘김
+        Page<Board> boards = boardService.getBoards(page, pageSize);
 
         model.addAttribute("boards", boards);
         model.addAttribute("member", member);

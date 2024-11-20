@@ -107,6 +107,90 @@ public class JdbcBoardRepository implements BoardRepository {
         return boards;
     }
 
+
+    // limit: 한 페이지 당 게시물 수
+    // offset: 몇 번째 행부터 출력할 지
+    @Override
+    public List<Board> findBoards(int limit, int offset) {
+        String sql = "select boardId,\n" +
+                "       sidoId,\n" +
+                "       (select sidoName\n" +
+                "        from REGION\n" +
+                "        where sidoId = BOARD.sidoId) sidoName,\n" +
+                "        memberId,\n" +
+                "        (select name\n" +
+                "         from MEMBER\n" +
+                "         where BOARD.memberId = MEMBER.memberId) name,\n" +
+                "    title,\n" +
+                "    content,\n" +
+                "    created_date\n" +
+                "from BOARD\n" +
+                "order by boardId desc\n " +
+                "LIMIT ? OFFSET ?";
+
+        List<Board> boards = new ArrayList<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, limit);
+            pstmt.setInt(2, offset);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Board board = new Board();
+                board.setBoardId(rs.getLong("boardId"));
+                board.setSidoId(rs.getLong("sidoId"));
+                board.setSidoName(rs.getString("sidoName"));
+                board.setMemberId(rs.getLong("memberId"));
+                board.setName(rs.getString("name"));
+                board.setTitle(rs.getString("title"));
+                board.setContent(rs.getString("content"));
+
+                Timestamp createdTime = rs.getTimestamp("created_date");
+                board.setCreated_date(createdTime.toLocalDateTime());
+
+                boards.add(board);
+            }
+
+            return boards;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("findAll", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public int countBoards() {
+        String sql = "SELECT COUNT(*) FROM BOARD";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw exTranslator.translate("countBoards", sql, e);
+        } finally {
+            close(con, pstmt, null);
+        }
+
+        return 0;
+    }
+
     @Override
     public Optional<Board> findByMemberId(Long memberId) {
         return findAll().stream()

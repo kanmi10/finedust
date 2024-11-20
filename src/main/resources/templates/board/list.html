@@ -28,7 +28,7 @@
             </tr>
             </thead>
             <tbody class="table-group-divider">
-            <tr th:each="board : ${boards}" th:onclick="|location.href='@{/board/detail/}' + ${board.boardId}|" style="cursor: pointer">
+            <tr th:each="board : ${boards.content}" th:onclick="|location.href='@{/board/detail/}' + ${board.boardId}|" style="cursor: pointer">
                 <td class="text-center" th:text="${board.boardId}"></td>
                 <td th:text="${board.title}"></td>
                 <td class="text-center" th:text="${board.name}"></td>
@@ -37,6 +37,28 @@
             </tbody>
         </table>
     </div>
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${boards.currentGroup <= 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/board/list(page=${boards.startPage - 10})}">
+                    이전
+                </a>
+            </li>
+
+            <li class="page-item" th:each="page : ${#numbers.sequence(boards.startPage, boards.endPage)}"
+                th:classappend="${page == boards.pageNumber} ? 'active'">
+                <a class="page-link" th:href="@{/board/list(page=${page})}" th:text="${page}">1</a>
+            </li>
+
+            <li class="page-item"
+                th:classappend="${boards.endPage >= boards.totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/board/list(page=${boards.endPage + 1})}">
+                    다음
+                </a>
+            </li>
+        </ul>
+    </nav>
 </header>
 
 

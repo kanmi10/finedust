@@ -25,8 +25,18 @@ public class BoardService {
         return boardRepository.findById(boardId);
     }
 
-    public List<Board> getAllBoards() {
-        return boardRepository.findAll();
+    // offset = (사용자가 요청한 페이지 수 - 1) * (한 페이지당 게시물 수)
+    // 사용자가 3페이지를 요청: offset = (3 - 1) * 10 = 20
+    public Page<Board> getBoards(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+
+        // 한 페이지 당 게시물 수와 계산한 offset을 인수로 넘김
+        List<Board> boards = boardRepository.findBoards(pageSize, offset);
+
+        // 총 게시물 수
+        int totalCount = boardRepository.countBoards();
+
+        return new Page<>(boards, page, pageSize, totalCount);
     }
 
     public Optional<Board> getBoardsByMemberId(Long memberId) {
