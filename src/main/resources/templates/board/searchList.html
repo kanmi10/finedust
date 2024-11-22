@@ -23,55 +23,52 @@
             <tr>
                 <th>번호</th>
                 <th>제목</th>
-                <th>지역</th>
                 <th>글쓴이</th>
                 <th>작성일</th>
             </tr>
             </thead>
-            <tbody class="table-group-divider" th:if="${boards != null}">
+            <tbody class="table-group-divider">
             <tr th:each="board : ${boards.content}" th:onclick="|location.href='@{/board/detail/}' + ${board.boardId}|"
                 style="cursor: pointer">
                 <td class="text-center" th:text="${board.boardId}"></td>
                 <td th:text="${board.title}"></td>
-                <td class="text-center" th:text="${board.sidoName}"></td>
                 <td class="text-center" th:text="${board.name}"></td>
-                <td class="text-center" th:text="${#temporals.format(board.created_date, 'yyyy-MM-dd')}">
+                <td class="text-center" th:text="${#temporals.format(board.created_date, 'yyyy-MM-dd a hh:mm')}">
                     2024-11-12
                 </td>
             </tr>
             </tbody>
         </table>
         <!-- Pagination -->
-        <nav th:if="${boards != null}">
+        <nav>
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${boards.currentGroup <= 0} ? 'disabled'">
-                    <a class="page-link" th:href="@{/board/list(page=${boards.startPage - 10}, searchType=${searchType}, searchWord=${searchWord})}">
+                    <a class="page-link" th:href="@{/board/search(page=${boards.startPage - 10}, searchType=${searchType}, searchWord=${searchWord})}">
                         이전
                     </a>
                 </li>
 
                 <li class="page-item" th:each="page : ${#numbers.sequence(boards.startPage, boards.endPage)}"
                     th:classappend="${page == boards.pageNumber} ? 'active'">
-                    <a class="page-link" th:href="@{/board/list(page=${page}, searchType=${searchType}, searchWord=${searchWord})}" th:text="${page}">1</a>
+                    <a class="page-link" th:href="@{/board/search(page=${page}, searchType=${searchType}, searchWord=${searchWord})}" th:text="${page}">1</a>
                 </li>
 
                 <li class="page-item"
                     th:classappend="${boards.endPage >= boards.totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{/board/list(page=${boards.endPage + 1}, searchType=${searchType}, searchWord=${searchWord})}">
+                    <a class="page-link" th:href="@{/board/search(page=${boards.endPage + 1}, searchType=${searchType}, searchWord=${searchWord})}">
                         다음
                     </a>
                 </li>
             </ul>
         </nav>
         <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-            <form id="search-board" class="d-flex align-items-center" th:action="@{/board/list}" th:method="GET" style="gap: 10px;">
+            <form id="search-board" class="d-flex align-items-center" th:action="@{/board/search}" th:method="GET" style="gap: 10px;">
                 <!-- 검색 조건 Select -->
                 <label for="searchType">
                     <select class="form-select form-select-sm" id="searchType" name="searchType" style="width: 150px; height: 43px;">
                         <option value="1" selected>제목</option>
                         <option value="2">내용</option>
                         <option value="3">작성자</option>
-                        <option value="4">제목+내용</option>
                     </select>
                 </label>
 

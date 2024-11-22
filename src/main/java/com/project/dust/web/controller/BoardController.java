@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 
 import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
@@ -20,14 +22,28 @@ public class BoardController {
 
     private final BoardService boardService;
 
+
     @GetMapping("/list")
     public String board(@RequestParam(defaultValue = "1") int page,
+                        @RequestParam(value = "searchType", required = false) Integer typeNumber,
+                        @RequestParam(value = "searchWord", required = false) String word,
                         @SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
                         Model model) {
-        int pageSize = 10; // 페이지당 게시물 수
 
-        // 사용자가 요청하는 페이지 번호(page)와 페이지당 게시물 수를 인수로 넘김
-        Page<Board> boards = boardService.getBoards(page, pageSize);
+        int pageSize = 10;// 페이지 당 게시물 수
+
+        Page<Board> boards;
+
+        // 검색어 유무
+        if (!StringUtils.hasText(word)) {
+            boards = boardService.getBoards(page, pageSize);
+
+        } else {
+            boards = boardService.searchBoards(typeNumber, word, page, pageSize);
+            model.addAttribute("searchType", typeNumber);
+            model.addAttribute("searchWord", word);
+
+        }
 
         model.addAttribute("boards", boards);
         model.addAttribute("member", member);
@@ -125,6 +141,26 @@ public class BoardController {
     public String delete(@PathVariable("boardId") Long boardId) {
         boardService.deleteBoardById(boardId);
         return "redirect:/board/list";
+    }
+
+    //@GetMapping("/search")
+    public String search(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
+                         @RequestParam("searchType") int typeNumber,
+                         @RequestParam("searchWord") String word,
+                         @RequestParam(defaultValue = "1") int page,
+                         Model model) {
+
+        int pageSize = 10;
+
+        Page<Board> boards = boardService.searchBoards(typeNumber, word, page, pageSize);
+        log.info("boards={}", boards);
+
+        model.addAttribute("boards", boards);
+        model.addAttribute("searchType", typeNumber);
+        model.addAttribute("searchWord", word);
+        model.addAttribute("member", member);
+
+        return "/board/searchList";
     }
 
 }

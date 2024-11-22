@@ -5,8 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -47,8 +46,39 @@ public class BoardService {
         return boardRepository.findBySidoId(sidoId);
     }
 
-    public Optional<Board> searchBoardsByTitle(String keyword) {
-        return boardRepository.searchByTitle(keyword);
+    public Page<Board> searchBoards(int typeNumber, String keyword, int page, int pageSize) {
+
+        int offset = (page - 1) * pageSize;
+
+        /**
+         * typeName
+         * 1: title
+         * 2: content
+         * 3: name
+         * 4: title_content
+         */
+        String typeName = Arrays.stream(Type.values())
+                .filter(type -> type.getTypeNumber() == typeNumber)
+                .map(Type::getTypeName)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("유효한 컬럼명이 아닙니다."));
+
+        List<Board> boards = switch (typeNumber) {
+            case 1 -> boardRepository.searchByTitle(keyword, pageSize, offset);
+            case 2 -> boardRepository.searchByContent(keyword, pageSize, offset);
+            case 3 -> boardRepository.searchByName(keyword, pageSize, offset);
+            case 4 -> boardRepository.searchByTitleAndContent(keyword, pageSize, offset);
+            default -> null;
+        };
+
+        if (boards == null || boards.isEmpty()) {
+            log.info("검색된 페이지가 없습니다");
+            return null;
+        }
+
+        int totalCount = boards.size();
+
+        return new Page<>(boards, page, pageSize, totalCount);
     }
 
     // Update

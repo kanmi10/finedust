@@ -14,11 +14,16 @@ public interface BoardRepository {
     List<Board> findBoards(int limit, int offset);
 
     int countBoards();
+    int countBoardsByKeyword(String typeName, String keyword);
 
 
     Optional<Board> findByMemberId(Long memberId);
     Optional<Board> findBySidoId(Long sidoId);
-    Optional<Board> searchByTitle(String keyword);
+    List<Board> searchByTitle(String keyword, int limit, int offset);
+    List<Board> searchByContent(String keyword, int limit, int offset);
+    List<Board> searchByTitleAndContent(String keyword, int limit, int offset);
+    List<Board> searchByName(String name, int limit, int offset);
+
 
     // Update
     void update(Board board);

@@ -95,6 +95,13 @@ class BoardRepositoryTest {
         }
     }
 
+    @Test
+    @DisplayName("전체 게시글 개수")
+    void countBoardsByKeyword() {
+        int count = boardRepository.countBoardsByKeyword("title", "한");
+        log.info("count={}", count);
+    }
+
     class CustomSQLExceptionTranslator extends SQLErrorCodeSQLExceptionTranslator {
 
         private final DataSource dataSource;

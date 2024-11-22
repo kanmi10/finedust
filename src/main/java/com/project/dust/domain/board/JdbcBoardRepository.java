@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -185,10 +186,50 @@ public class JdbcBoardRepository implements BoardRepository {
         } catch (SQLException e) {
             throw exTranslator.translate("countBoards", sql, e);
         } finally {
-            close(con, pstmt, null);
+            close(con, pstmt, rs);
         }
 
         return 0;
+    }
+
+    @Override
+    public int countBoardsByKeyword(String typeName, String keyword) {
+        //typeName이 유효한 값인지 검증
+        isValid(typeName);
+
+        String sql = "select count(*)\n" +
+                     "from BOARD\n" +
+                     "where "+ typeName +" like ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+
+            pstmt.setString(1, "%" + keyword + "%");
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw exTranslator.translate("countBoards", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+        return 0;
+    }
+
+    private void isValid(String typeName) {
+        Arrays.stream(Type.values())
+                .filter(type -> type.getTypeName().equals(typeName))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("유효한 컬럼명이 아닙니다."));
     }
 
     @Override
@@ -206,10 +247,220 @@ public class JdbcBoardRepository implements BoardRepository {
     }
 
     @Override
-    public Optional<Board> searchByTitle(String keyword) {
-        return findAll().stream()
-                .filter(board -> board.getTitle().equals(keyword))
-                .findAny();
+    public List<Board> searchByTitle(String keyword, int limit, int offset) {
+        String sql = "select boardId,\n" +
+                "       R.sidoId,\n" +
+                "       sidoName,\n" +
+                "       M.memberId,\n" +
+                "       name,\n" +
+                "       title,\n" +
+                "       content,created_date\n" +
+                "       from BOARD\n" +
+                "join MEMBER M on BOARD.memberId = M.memberId\n" +
+                "join REGION R on R.sidoId = BOARD.sidoId\n" +
+                "where title like ?\n" +
+                "limit ? offset ?";
+
+        List<Board> boards = new ArrayList<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setInt(2, limit);
+            pstmt.setInt(3, offset);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Board board = new Board();
+                board.setBoardId(rs.getLong("boardId"));
+                board.setSidoId(rs.getLong("sidoId"));
+                board.setSidoName(rs.getString("sidoName"));
+                board.setMemberId(rs.getLong("memberId"));
+                board.setName(rs.getString("name"));
+                board.setTitle(rs.getString("title"));
+                board.setContent(rs.getString("content"));
+
+                Timestamp createdTime = rs.getTimestamp("created_date");
+                board.setCreated_date(createdTime.toLocalDateTime());
+
+                boards.add(board);
+            }
+
+            return boards;
+
+        } catch (SQLException e) {
+            throw exTranslator.translate("searchBoards", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public List<Board> searchByContent(String keyword, int limit, int offset) {
+        String sql = "select boardId,\n" +
+                "       R.sidoId,\n" +
+                "       sidoName,\n" +
+                "       M.memberId,\n" +
+                "       name,\n" +
+                "       title,\n" +
+                "       content,created_date\n" +
+                "       from BOARD\n" +
+                "join MEMBER M on BOARD.memberId = M.memberId\n" +
+                "join REGION R on R.sidoId = BOARD.sidoId\n" +
+                "where content like ?\n" +
+                "limit ? offset ?";
+
+        List<Board> boards = new ArrayList<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setInt(2, limit);
+            pstmt.setInt(3, offset);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Board board = new Board();
+                board.setBoardId(rs.getLong("boardId"));
+                board.setSidoId(rs.getLong("sidoId"));
+                board.setSidoName(rs.getString("sidoName"));
+                board.setMemberId(rs.getLong("memberId"));
+                board.setName(rs.getString("name"));
+                board.setTitle(rs.getString("title"));
+                board.setContent(rs.getString("content"));
+
+                Timestamp createdTime = rs.getTimestamp("created_date");
+                board.setCreated_date(createdTime.toLocalDateTime());
+
+                boards.add(board);
+            }
+        } catch (SQLException e) {
+            throw exTranslator.translate("searchByContent", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+        return boards;
+    }
+
+    @Override
+    public List<Board> searchByTitleAndContent(String keyword, int limit, int offset) {
+        String sql = "select boardId,\n" +
+                "       R.sidoId,\n" +
+                "       sidoName,\n" +
+                "       M.memberId,\n" +
+                "       name,\n" +
+                "       title,\n" +
+                "       content,created_date\n" +
+                "       from BOARD\n" +
+                "join MEMBER M on BOARD.memberId = M.memberId\n" +
+                "join REGION R on R.sidoId = BOARD.sidoId\n" +
+                "where title like ? || content like ?\n" +
+                "limit ? offset ?";
+
+        List<Board> boards = new ArrayList<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setString(2, "%" + keyword + "%");
+            pstmt.setInt(3, limit);
+            pstmt.setInt(4, offset);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Board board = new Board();
+                board.setBoardId(rs.getLong("boardId"));
+                board.setSidoId(rs.getLong("sidoId"));
+                board.setSidoName(rs.getString("sidoName"));
+                board.setMemberId(rs.getLong("memberId"));
+                board.setName(rs.getString("name"));
+                board.setTitle(rs.getString("title"));
+                board.setContent(rs.getString("content"));
+
+                Timestamp createdTime = rs.getTimestamp("created_date");
+                board.setCreated_date(createdTime.toLocalDateTime());
+
+                boards.add(board);
+            }
+        } catch (SQLException e) {
+            throw exTranslator.translate("searchByTitleAndContent", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+        return boards;
+    }
+
+    @Override
+    public List<Board> searchByName(String name, int limit, int offset) {
+        String sql = "select boardId,\n" +
+                "       R.sidoId,\n" +
+                "       sidoName,\n" +
+                "       M.memberId,\n" +
+                "       name,\n" +
+                "       title,\n" +
+                "       content,created_date\n" +
+                "       from BOARD\n" +
+                "join MEMBER M on BOARD.memberId = M.memberId\n" +
+                "join REGION R on R.sidoId = BOARD.sidoId\n" +
+                "where name like ?\n" +
+                "limit ? offset ?";
+
+        List<Board> boards = new ArrayList<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, "%" + name + "%");
+            pstmt.setInt(2, limit);
+            pstmt.setInt(3, offset);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Board board = new Board();
+                board.setBoardId(rs.getLong("boardId"));
+                board.setSidoId(rs.getLong("sidoId"));
+                board.setSidoName(rs.getString("sidoName"));
+                board.setMemberId(rs.getLong("memberId"));
+                board.setName(rs.getString("name"));
+                board.setTitle(rs.getString("title"));
+                board.setContent(rs.getString("content"));
+
+                Timestamp createdTime = rs.getTimestamp("created_date");
+                board.setCreated_date(createdTime.toLocalDateTime());
+
+                boards.add(board);
+            }
+        } catch (SQLException e) {
+            throw exTranslator.translate("searchByName", sql, e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+        return boards;
     }
 
     @Override
