@@ -35,19 +35,19 @@
                 <th>작성일</th>
             </tr>
             </thead>
-            <tbody class="table-group-divider" th:if="${boards != null}">
+            <tbody class="table-group-divider" th:if="${boards != null || boards.totalElements > 0}">
             <tr th:each="board : ${boards.content}" th:onclick="|location.href='@{/board/detail/}' + ${board.boardId}|"
                 style="cursor: pointer">
                 <td class="text-center" th:text="${board.boardId}"></td>
                 <td th:text="${board.title}"></td>
                 <td class="text-center" th:text="${board.sidoName}"></td>
                 <td class="text-center" th:text="${board.name}"></td>
-                <td class="text-center" th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">
+                <td class="text-center" th:text="${#temporals.format(board.created_date, 'yyyy-MM-dd')}">
                     2024-11-12
                 </td>
             </tr>
             </tbody>
-            <tbody class="table-group-divider" th:if="${boards == null}">
+            <tbody class="table-group-divider" th:if="${boards == null || boards.totalElements == 0}">
             <tr>
                 <!-- 모든 열 합치기 -->
                 <td colspan="5" class="text-center bg-white">게시물이 없습니다.</td>
@@ -55,11 +55,11 @@
             </tbody>
         </table>
         <!-- Pagination -->
-        <nav th:if="${boards != null}">
+        <nav th:if="${boards != null && boards.totalElements > 0}">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${boards.currentGroup <= 0} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/board/list(page=${boards.startPage - 10}, searchType=${searchType}, searchWord=${searchWord}, sidoId=${boards.sidoId})}">
+                       th:href="@{/board/list(page=${boards.startPage - 10}, searchType=${searchType}, searchWord=${searchWord})}">
                         이전
                     </a>
                 </li>
@@ -67,14 +67,14 @@
                 <li class="page-item" th:each="page : ${#numbers.sequence(boards.startPage, boards.endPage)}"
                     th:classappend="${page == boards.pageNumber} ? 'active'">
                     <a class="page-link"
-                       th:href="@{/board/list(page=${page}, searchType=${searchType}, searchWord=${searchWord}, sidoId=${boards.sidoId})}"
+                       th:href="@{/board/list(page=${page}, searchType=${searchType}, searchWord=${searchWord})}"
                        th:text="${page}">1</a>
                 </li>
 
                 <li class="page-item"
                     th:classappend="${boards.endPage >= boards.totalPages} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/board/list(page=${boards.endPage + 1}, searchType=${searchType}, searchWord=${searchWord}, sidoId=${boards.sidoId})}">
+                       th:href="@{/board/list(page=${boards.endPage + 1}, searchType=${searchType}, searchWord=${searchWord})}">
                         다음
                     </a>
                 </li>

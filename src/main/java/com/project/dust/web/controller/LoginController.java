@@ -1,9 +1,9 @@
 package com.project.dust.web.controller;
 
-import com.project.dust.domain.login.LoginForm;
-import com.project.dust.domain.login.LoginService;
-import com.project.dust.domain.member.Member;
-import com.project.dust.domain.member.MemberService;
+import com.project.dust.login.LoginForm;
+import com.project.dust.login.LoginService;
+import com.project.dust.member.Member;
+import com.project.dust.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

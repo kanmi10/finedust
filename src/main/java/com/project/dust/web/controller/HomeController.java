@@ -1,8 +1,8 @@
 package com.project.dust.web.controller;
 
-import com.project.dust.domain.dust.Dust;
-import com.project.dust.domain.dust.DustService;
-import com.project.dust.domain.member.Member;
+import com.project.dust.dust.Dust;
+import com.project.dust.dust.service.DustService;
+import com.project.dust.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

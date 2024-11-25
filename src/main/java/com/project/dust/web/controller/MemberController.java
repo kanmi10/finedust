@@ -1,8 +1,8 @@
 package com.project.dust.web.controller;
 
-import com.project.dust.domain.member.Member;
-import com.project.dust.domain.member.MemberSaveForm;
-import com.project.dust.domain.member.MemberService;
+import com.project.dust.member.Member;
+import com.project.dust.member.MemberSaveForm;
+import com.project.dust.member.service.MemberService;
 import com.project.dust.web.validation.ValidationSequence;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

@@ -1,11 +1,12 @@
 package com.project.dust.domain.member;
 
+import com.project.dust.member.Member;
+import com.project.dust.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.util.Optional;
 
