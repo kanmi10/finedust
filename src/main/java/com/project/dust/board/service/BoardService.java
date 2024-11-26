@@ -38,7 +38,7 @@ public class BoardService {
 
         if (boards == null || boards.isEmpty()) {
             log.info("검색된 페이지가 없습니다");
-            return null;
+            return new Page<>(boards, 0, 0, 0, sidoId);
         }
 
         return new Page<>(boards, page, pageSize, totalCount, sidoId);
@@ -54,15 +54,12 @@ public class BoardService {
         boardRepository.deleteById(boardId);
     }
 
-    public void deleteBoardsByMemberId(Long memberId) {
-        boardRepository.deleteByMemberId(memberId);
-    }
-
-    public void deleteAllBoards() {
-        boardRepository.deleteAll();
-    }
 
     public Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow();
+    }
+
+    public String getSidoName(Long sidoId) {
+        return boardRepository.getSidoName(sidoId);
     }
 }

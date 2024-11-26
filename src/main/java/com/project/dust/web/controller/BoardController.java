@@ -38,6 +38,10 @@ public class BoardController {
 
         Page<Board> boards = boardService.searchBoards(sidoId, typeNumber, word, page, pageSize);
 
+        if (sidoId != null) {
+            String sidoName = boardService.getSidoName(sidoId);
+            model.addAttribute("sidoName", sidoName);
+        }
 
         model.addAttribute("searchType", typeNumber);
         model.addAttribute("searchWord", word);

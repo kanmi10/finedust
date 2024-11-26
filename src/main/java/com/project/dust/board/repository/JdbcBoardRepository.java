@@ -66,7 +66,7 @@ public class JdbcBoardRepository implements BoardRepository {
                 .findAny();
     }
 
-    @Override
+//    @Override
     public List<Board> findAll() {
         String sql = "select boardId,\n" +
                 "       sidoId,\n" +
@@ -121,7 +121,7 @@ public class JdbcBoardRepository implements BoardRepository {
 
     // limit: 한 페이지 당 게시물 수
     // offset: 몇 번째 행부터 출력할 지
-    @Override
+//    @Override
     public List<Board> findBoards(int limit, int offset) {
         String sql = "select boardId,\n" +
                 "       sidoId,\n" +
@@ -177,12 +177,12 @@ public class JdbcBoardRepository implements BoardRepository {
         }
     }
 
-    @Override
+//    @Override
     public List<Board> findBoards(BoardSearchDTO boardSearchDTO) {
         return List.of();
     }
 
-    @Override
+//    @Override
     public int countAllBoards() {
         String sql = "SELECT COUNT(*) FROM BOARD";
 
@@ -207,12 +207,12 @@ public class JdbcBoardRepository implements BoardRepository {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countAllBoards(BoardSearchDTO boardSearchDTO) {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countBoardsByKeyword(String typeName, String keyword) {
         //typeName이 유효한 값인지 검증
         isValid(typeName);
@@ -245,7 +245,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countBoardsBySidoId(Long sidoId) {
         String sql = "select count(*) from BOARD\n" +
                 "where sidoId = ?";
@@ -274,7 +274,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countBoardsByTitle(String title) {
         String sql = "select count(*) from BOARD\n" +
                     "where title like ?";
@@ -303,7 +303,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countBoardsByContent(String content) {
         String sql = "select count(*) from BOARD\n" +
                 "where content like ?";
@@ -332,7 +332,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countBoardsByTitleAndContent(String title_content) {
         String sql = "select count(*) from BOARD\n" +
                 "where title like ? || content = ?";
@@ -362,7 +362,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return 0;
     }
 
-    @Override
+//    @Override
     public int countBoardsByName(String name) {
         String sql = "select count(*) from BOARD\n" +
                 "where name like ?";
@@ -398,14 +398,14 @@ public class JdbcBoardRepository implements BoardRepository {
                 .orElseThrow(() -> new IllegalArgumentException("유효한 컬럼명이 아닙니다."));
     }
 
-    @Override
+//    @Override
     public Optional<Board> findByMemberId(Long memberId) {
         return findAll().stream()
                 .filter(board -> board.getMemberId().equals(memberId))
                 .findAny();
     }
 
-    @Override
+//    @Override
     public List<Board> searchBySidoId(Long sidoId, int limit, int offset) {
         String sql = "select boardId,\n" +
                 "       sidoId,\n" +
@@ -463,7 +463,7 @@ public class JdbcBoardRepository implements BoardRepository {
         }
     }
 
-    @Override
+//    @Override
     public List<Board> searchByTitle(String title, int limit, int offset) {
         String sql = "select boardId,\n" +
                 "       R.sidoId,\n" +
@@ -517,7 +517,7 @@ public class JdbcBoardRepository implements BoardRepository {
         }
     }
 
-    @Override
+//    @Override
     public List<Board> searchByContent(String content, int limit, int offset) {
         String sql = "select boardId,\n" +
                 "       R.sidoId,\n" +
@@ -571,7 +571,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return boards;
     }
 
-    @Override
+//    @Override
     public List<Board> searchByTitleAndContent(String title_content, int limit, int offset) {
         String sql = "select boardId,\n" +
                 "       R.sidoId,\n" +
@@ -626,7 +626,7 @@ public class JdbcBoardRepository implements BoardRepository {
         return boards;
     }
 
-    @Override
+//    @Override
     public List<Board> searchByName(String name, int limit, int offset) {
         String sql = "select boardId,\n" +
                 "       R.sidoId,\n" +
@@ -727,12 +727,8 @@ public class JdbcBoardRepository implements BoardRepository {
         }
     }
 
-    @Override
-    public void deleteByMemberId(Long memberId) {
 
-    }
-
-    @Override
+//    @Override
     public void deleteAll() {
         String sql = "delete from BOARD";
 
@@ -749,6 +745,11 @@ public class JdbcBoardRepository implements BoardRepository {
             close(con, pstmt, null);
         }
 
+    }
+
+    @Override
+    public String getSidoName(Long sidoId) {
+        return "";
     }
 
     private Connection getConnection() throws SQLException {

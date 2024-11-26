@@ -19,95 +19,24 @@ public class MyBatisBoardRepository implements BoardRepository {
         boardMapper.save(board);
     }
 
+
     @Override
     public Optional<Board> findById(Long boardId) {
-        return Optional.empty();
+        return boardMapper.findById(boardId);
     }
 
-    @Override
-    public List<Board> findAll() {
-        return List.of();
-    }
-
-    @Override
-    public List<Board> findBoards(int limit, int offset) {
-        return List.of();
-    }
 
     @Override
     public List<Board> findBoards(BoardSearchDTO boardSearchDTO) {
         return boardMapper.findBoards(boardSearchDTO);
     }
 
-    @Override
-    public int countAllBoards() {
-        return 0;
-    }
 
     @Override
     public int countAllBoards(BoardSearchDTO boardSearchDTO) {
         return boardMapper.countAllBoards(boardSearchDTO);
     }
 
-    @Override
-    public int countBoardsByKeyword(String typeName, String keyword) {
-        return 0;
-    }
-
-    @Override
-    public int countBoardsBySidoId(Long sidoId) {
-        return 0;
-    }
-
-    @Override
-    public int countBoardsByTitle(String title) {
-        return 0;
-    }
-
-    @Override
-    public int countBoardsByContent(String content) {
-        return 0;
-    }
-
-    @Override
-    public int countBoardsByTitleAndContent(String title_content) {
-        return 0;
-    }
-
-    @Override
-    public int countBoardsByName(String name) {
-        return 0;
-    }
-
-    @Override
-    public Optional<Board> findByMemberId(Long memberId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Board> searchBySidoId(Long sidoId, int limit, int offset) {
-        return List.of();
-    }
-
-    @Override
-    public List<Board> searchByTitle(String title, int limit, int offset) {
-        return List.of();
-    }
-
-    @Override
-    public List<Board> searchByContent(String content, int limit, int offset) {
-        return List.of();
-    }
-
-    @Override
-    public List<Board> searchByTitleAndContent(String title_content, int limit, int offset) {
-        return List.of();
-    }
-
-    @Override
-    public List<Board> searchByName(String name, int limit, int offset) {
-        return List.of();
-    }
 
     @Override
     public void update(Board board) {
@@ -116,16 +45,12 @@ public class MyBatisBoardRepository implements BoardRepository {
 
     @Override
     public void deleteById(Long boardId) {
-
+        boardMapper.deleteById(boardId);
     }
 
-    @Override
-    public void deleteByMemberId(Long memberId) {
-
-    }
 
     @Override
-    public void deleteAll() {
-
+    public String getSidoName(Long sidoId) {
+        return boardMapper.getSidoName(sidoId);
     }
 }

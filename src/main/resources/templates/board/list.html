@@ -17,7 +17,7 @@
     <div class="container position-relative">
         <div class="d-flex justify-content-between mb-1">
             <div class="col-md-4 d-flex align-items-center">
-                <label for="sidoId" class="form-label h3 w-50">게시판</label>
+                <label for="sidoId" class="form-label h3 w-100"><span th:text="${sidoName}?: '전체'"></span> 게시판</label>
                 <select class="form-select form-select-sm" id="sidoId">
                     <option value="" disabled selected id="sidoOption">지역을 선택하세요</option>
                 </select>
@@ -35,7 +35,7 @@
                 <th>작성일</th>
             </tr>
             </thead>
-            <tbody class="table-group-divider" th:if="${boards != null}">
+            <tbody class="table-group-divider" th:if="${!boards.content.isEmpty()}">
             <tr th:each="board : ${boards.content}" th:onclick="|location.href='@{/board/detail/}' + ${board.boardId}|"
                 style="cursor: pointer">
                 <td class="text-center" th:text="${board.boardId}"></td>
@@ -47,7 +47,7 @@
                 </td>
             </tr>
             </tbody>
-            <tbody class="table-group-divider" th:if="${boards == null}">
+            <tbody class="table-group-divider" th:if="${boards.content.isEmpty()}">
             <tr>
                 <!-- 모든 열 합치기 -->
                 <td colspan="5" class="text-center bg-white">게시물이 없습니다.</td>
@@ -55,7 +55,7 @@
             </tbody>
         </table>
         <!-- Pagination -->
-        <nav th:if="${boards != null}">
+        <nav th:if="${!boards.content.isEmpty()}">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${boards.currentGroup <= 0} ? 'disabled'">
                     <a class="page-link"
@@ -84,6 +84,8 @@
             <form id="search-board" class="d-flex align-items-center" th:action="@{/board/list}" th:method="GET"
                   style="gap: 10px;">
                 <!-- 검색 조건 Select -->
+                <input type="hidden" name="sidoId" th:value="${boards.sidoId}">
+
                 <label for="searchType">
                     <select class="form-select form-select-sm" id="searchType" name="searchType"
                             style="width: 150px; height: 43px;">

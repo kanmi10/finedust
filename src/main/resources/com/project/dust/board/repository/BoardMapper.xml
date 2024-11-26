@@ -25,20 +25,20 @@
                  join REGION R on R.sidoId = BOARD.sidoId
         <where>
             <if test="sidoId != null and sidoId != ''">
-                R.sidoId = #{sidoId}
+                and R.sidoId = #{sidoId}
             </if>
             <if test="searchWord != null and searchWord != ''">
                 <if test="searchType == 1">
-                    title like concat ('%', #{searchWord}, '%')
+                    and title like concat ('%', #{searchWord}, '%')
                 </if>
                 <if test="searchType == 2">
-                    content like concat ('%', #{searchWord}, '%')
+                    and content like concat ('%', #{searchWord}, '%')
                 </if>
                 <if test="searchType == 3">
-                    name like concat ('%', #{searchWord},'%')
+                    and name like concat ('%', #{searchWord}, '%')
                 </if>
                 <if test="searchType == 4">
-                    title like concat ('%',  #{searchWord}, '%') or content like concat ('%',  #{searchWord}, '%')
+                    and title like concat ('%', #{searchWord}, '%') or content like concat ('%', #{searchWord}, '%')
                 </if>
             </if>
         </where>
@@ -54,22 +54,52 @@
                  join REGION on REGION.sidoId = BOARD.sidoId
         <where>
             <if test="sidoId != null and sidoId != ''">
-                REGION.sidoId = #{sidoId}
+                and REGION.sidoId = #{sidoId}
             </if>
             <if test="searchWord != null and searchWord != ''">
                 <if test="searchType == 1">
-                    title like concat ('%', #{searchWord},'%')
+                    and title like concat ('%', #{searchWord},'%')
                 </if>
                 <if test="searchType == 2">
-                    content like concat ('%',  #{searchWord}, '%')
+                    and content like concat ('%',  #{searchWord}, '%')
                 </if>
                 <if test="searchType == 3">
-                    name like concat ('%', #{searchWord}, '%')
+                    and name like concat ('%', #{searchWord}, '%')
                 </if>
                 <if test="searchType == 4">
-                    title like concat ('%', #{searchWord}, '%') or content like concat ('%', #{searchWord}, '%')
+                    and title like concat ('%', #{searchWord}, '%') or content like concat ('%', #{searchWord}, '%')
                 </if>
             </if>
         </where>
     </select>
+
+    <select id="findById" resultType="Board">
+        select
+            boardId,
+            REGION.sidoId,
+            sidoName,
+            MEMBER.memberId,
+            name,
+            title,
+            content,
+            created_date
+        from BOARD
+                 join MEMBER on MEMBER.memberId = BOARD.memberId
+                 join REGION on REGION.sidoId = BOARD.sidoId
+        where boardId = #{boardId};
+    </select>
+
+    <select id="getSidoName">
+        select sidoName
+        from REGION
+        where sidoId = #{sidoId};
+    </select>
+
+    <delete id="deleteById">
+        delete from BOARD
+        where boardId = #{boardId};
+    </delete>
+
+
+
 </mapper>

@@ -38,7 +38,7 @@
                     <span class="h5 me-2" th:text="${board.name} + '님'">작성자</span>
                     <button class="badge text-bg-success me-2" th:text="${board.sidoName}"></button>
                     <span class="text-secondary h6"
-                          th:text="${#temporals.format(board.created_date, '작성일시: yyyy-MM-dd a hh:mm')}">2024년 11월 14일</span>
+                          th:text="${#temporals.format(board.createdDate, '작성일시: yyyy-MM-dd a hh:mm')}">2024년 11월 14일</span>
                 </li>
                 <li class="list-group-item">
                     <p th:text="${board.content}" class="mt-2">

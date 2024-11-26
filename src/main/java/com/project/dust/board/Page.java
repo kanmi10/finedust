@@ -18,6 +18,7 @@ public class Page<T> {
     private int startPage;      // 그룹의 첫 페이지 번호
     private int endPage;        // 그룹의 마지막 페이지 번호
 
+    // 지역 게시판 조회시
     private Long sidoId;        // 지역번호
 
     public Page(List<T> content, int pageNumber, int pageSize, int totalElements, Long sidoId) {
