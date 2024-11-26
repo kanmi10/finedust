@@ -27,8 +27,8 @@ class JdbcDustRepositoryTest {
     }
 
     @Test
-    void findByStationName()  {
-        List<String> stationNames = dustRepository.findByStationName("중");
+    void findStationNameByKeyword()  {
+        List<String> stationNames = dustRepository.findStationNameByKeyword("중");
         System.out.println("stationNames = " + stationNames);
         Assertions.assertThat(stationNames).contains("중구").contains("중앙대로(고잔동)");
     }

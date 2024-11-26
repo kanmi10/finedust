@@ -20,7 +20,6 @@ import java.util.Map;
 import static java.sql.Types.*;
 
 @Slf4j
-@Primary
 @Repository
 public class JdbcDustRepository implements DustRepository {
 
@@ -88,7 +87,7 @@ public class JdbcDustRepository implements DustRepository {
     }
 
     @Override
-    public Dust searchDust(String search) {
+    public Dust searchDust(String stationName) {
         String sql = "select\n" +
                 "    stationName,\n" +
                 "    (select sidoName\n" +
@@ -108,7 +107,7 @@ public class JdbcDustRepository implements DustRepository {
         try {
             con = getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, search);
+            pstmt.setString(1, stationName);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -136,7 +135,7 @@ public class JdbcDustRepository implements DustRepository {
     }
 
     @Override
-    public List<String> findByStationName(String stationName) {
+    public List<String> findStationNameByKeyword(String keyword) {
         String sql = "select stationName\n" +
                      "from DUST\n" +
                      "where stationName like ?";
@@ -150,7 +149,7 @@ public class JdbcDustRepository implements DustRepository {
         try {
             con = getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, stationName + "%");
+            pstmt.setString(1, keyword + "%");
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -228,6 +227,11 @@ public class JdbcDustRepository implements DustRepository {
         } finally {
             close(con, pstmt, rs);
         }
+    }
+
+    @Override
+    public void findAllDusts() {
+
     }
 
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {

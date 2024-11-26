@@ -43,10 +43,13 @@ public class DustService {
 
         //2. dust 객체에 담겨있는 측정일시와 사용자 데이터 요청일시를 비교
         LocalDateTime requestTime = LocalDateTime.now();
+        log.info("requestTime={}", requestTime);
         LocalDateTime dataTime = dust.getDataTime();
+        log.info("dataTime={}", dataTime);
 
         if (isDataOutOfDate(dataTime, requestTime)) {
             //3-1. 만약 오래된 데이터일 경우, API에서 데이터를 다시 가져와 DB 업데이트 한후 다시 대기오염 데이터를 조회해 dust 객체에 담음
+            log.info("오래된 데이터! 데이터 업데이트 시작합니다.");
             update(dust.getSidoName());
             return dustRepository.searchDust(search);
         }
@@ -67,6 +70,8 @@ public class DustService {
         apiJsonParser(jsonData);
 
         log.info("API 가져온 데이터={}", dusts);
+        log.info("API 데이터 개수={}", dusts.size());
+
         dustRepository.update(dusts);
     }
 
@@ -215,7 +220,7 @@ public class DustService {
     }
 
     public List<String> findStationsByName(String stationName) {
-        return dustRepository.findByStationName(stationName);
+        return dustRepository.findStationNameByKeyword(stationName);
     }
 
     public Map<Long, String> fetchSidoNames() {
