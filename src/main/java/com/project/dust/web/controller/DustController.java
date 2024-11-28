@@ -68,6 +68,7 @@ public class DustController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", dustService.fetchSidoNames());
+        log.info("fetchSidoNames={}", dustService.fetchSidoNames());
         return response;
     }
 

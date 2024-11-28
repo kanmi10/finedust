@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dust.member.repository.MemberMapper">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into MEMBER (loginId, password, name) values (#{loginId}, #{password}, #{name});
+    </insert>
+
+    <select id="findById" resultType="Member">
+        select memberId,
+               loginId,
+               password,
+               name,
+               is_deleted
+        from MEMBER where memeberId = #{id};
+    </select>
+
+    <select id="findByLoginId" resultType="Member">
+        select memberId as id,
+               loginId,
+               password,
+               name,
+               is_deleted
+        from MEMBER
+        where loginId = #{loginId};
+    </select>
+
+    <select id="findAll" resultType="Member">
+        select memberId,
+               loginId,
+               password,
+               name,
+               is_deleted
+        from MEMBER;
+    </select>
+
+    <update id="deleteById">
+        update MEMBER
+        set is_deleted = true
+        where memberId = #{memberId};
+    </update>
+
+    <insert id="addFavorite">
+        insert into BOOKMARK (stationId, memberId) values (#{stationId}, #{memberId});
+    </insert>
+
+    <delete id="removeFavorite">
+        delete from BOOKMARK
+               where bookmarkId = #{bookmarkdId};
+    </delete>
+
+    <select id="getStationName">
+        select stationId
+        from DUST
+        where stationName = #{stationName};
+    </select>
+
+    <select id="hasFavoriteForStation">
+        select bookmarkId
+        from BOOKMARK
+        where memberId = #{memberId} and stationId = #{stationId};
+    </select>
+
+    <select id="getFavorites" resultType="String">
+        select (select stationName
+                from DUST
+                where BOOKMARK.stationId = DUST.stationId) stationName
+        from BOOKMARK
+        where memberId = #{memberId};
+    </select>
+
+    <select id="isMemberNameDuplicate">
+        select exists(
+            select *
+            from MEMBER
+            where memberId = #{name});
+    </select>
+
+    <select id="isMemberIdDuplicate">
+        select exists(
+            select *
+            from MEMBER
+            where loginId = #{loginId});
+    </select>
+
+    <select id="isWithdrawMember">
+        select is_deleted
+        from MEMBER
+        where loginId = #{loginId};
+    </select>
+
+</mapper>

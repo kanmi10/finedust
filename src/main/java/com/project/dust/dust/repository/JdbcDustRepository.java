@@ -21,7 +21,7 @@ import static java.sql.Types.*;
 
 @Slf4j
 @Repository
-public class JdbcDustRepository implements DustRepository {
+public class JdbcDustRepository {
 
     private final DataSource dataSource;
     private final SQLExceptionTranslator exTranslator;
@@ -31,7 +31,6 @@ public class JdbcDustRepository implements DustRepository {
         this.exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
-    @Override
     public void save(List<Dust> dusts) {
 
         String sql = "INSERT INTO DUST (stationId, sidoId, stationName, dataTime, pm10Value, pm25Value, no2Value) VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -86,7 +85,6 @@ public class JdbcDustRepository implements DustRepository {
         return null;
     }
 
-    @Override
     public Dust searchDust(String stationName) {
         String sql = "select\n" +
                 "    stationName,\n" +
@@ -134,7 +132,6 @@ public class JdbcDustRepository implements DustRepository {
         }
     }
 
-    @Override
     public List<String> findStationNameByKeyword(String keyword) {
         String sql = "select stationName\n" +
                      "from DUST\n" +
@@ -167,7 +164,6 @@ public class JdbcDustRepository implements DustRepository {
 
     }
 
-    @Override
     public void update(List<Dust> dusts) {
         String sql = "update DUST\n" +
                     "set dataTime = ?, pm10Value = ?, pm25Value = ?, no2Value = ?\n" +
@@ -201,7 +197,6 @@ public class JdbcDustRepository implements DustRepository {
      * 모든 시도명 조회
      * @return 모든 시도명
      */
-    @Override
     public Map<Long, String> findAllSidoNames() {
         String sql = "select * from REGION";
 
@@ -229,7 +224,7 @@ public class JdbcDustRepository implements DustRepository {
         }
     }
 
-    @Override
+//    @Override
     public void findAllDusts() {
 
     }

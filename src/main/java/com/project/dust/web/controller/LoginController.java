@@ -57,6 +57,8 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute(LOGIN_MEMBER, loginMember);
 
+            log.info("loginMember={}", loginMember);
+
             //북마크 상태 조회
             log.info("즐겨찾기 목록={}", memberService.getFavorite(loginMember.getId()));
 

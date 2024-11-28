@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
-@Primary
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
 
@@ -34,7 +33,7 @@ public class JdbcMemberRepository implements MemberRepository {
      * @return 저장된 회원 객체
      */
     @Override
-    public Member save(Member member) {
+    public void save(Member member) {
         String sql = "insert into MEMBER (loginId, password, name) values (?, ?, ?)";
 
         Connection con = null;
@@ -56,8 +55,6 @@ public class JdbcMemberRepository implements MemberRepository {
         } finally {
             close(con, pstmt, null);
         }
-
-        return member;
     }
 
     @Override
@@ -288,6 +285,11 @@ public class JdbcMemberRepository implements MemberRepository {
 
     }
 
+    /**
+     * 이름 중복 체크
+     * @param name 사용자 입력 이름
+     * @return 중복 여부
+     */
     @Override
     public boolean isMemberNameDuplicate(String name) {
         String sql = "select * from MEMBER where name = ?";

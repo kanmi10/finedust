@@ -15,7 +15,7 @@ public interface DustRepository {
 
     void update(List<Dust> dusts);
 
-    Map<Long, String> findAllSidoNames();
+    List<Map<Long, Object>> findAllSidoNames();
 
     void findAllDusts();
 }

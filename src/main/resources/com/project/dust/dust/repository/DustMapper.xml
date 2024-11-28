@@ -34,7 +34,6 @@
     </select>
 
     <update id="update" parameterType="List">
-
         <foreach collection="list" item="dust" separator=";">
             update DUST
             set dataTime = #{dust.dataTime},

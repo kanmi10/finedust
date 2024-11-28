@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -223,8 +224,20 @@ public class DustService {
         return dustRepository.findStationNameByKeyword(stationName);
     }
 
-    public Map<Long, String> fetchSidoNames() {
-        return dustRepository.findAllSidoNames();
+    public Map<Long, Object> fetchSidoNames() {
+        Map<Long, Object> regionMap = new HashMap<>();
+
+        List<Map<Long, Object>> allSidoNames = dustRepository.findAllSidoNames();
+
+        for (int i = 0; i < allSidoNames.size(); i++) {
+            Map<Long, Object> longObjectMap = allSidoNames.get(i);
+            log.info("longObjectMap={}", longObjectMap);
+            Long key = (Long) longObjectMap.get("sidoId");
+            Object value = longObjectMap.get("sidoName");
+            regionMap.put(key, value);
+        }
+
+        return regionMap;
     }
 
 }

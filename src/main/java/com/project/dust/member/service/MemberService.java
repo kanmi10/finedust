@@ -2,6 +2,7 @@ package com.project.dust.member.service;
 
 import com.project.dust.member.Member;
 import com.project.dust.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,15 +11,11 @@ import java.util.Set;
 
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
-    @Autowired
-    public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
 
     public void join(Member member) {
         memberRepository.save(member);

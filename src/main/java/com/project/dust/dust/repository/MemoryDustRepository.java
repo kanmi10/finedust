@@ -9,34 +9,34 @@ import java.util.Map;
 
 @Repository
 @Slf4j
-public class MemoryDustRepository implements DustRepository {
+public class MemoryDustRepository {
 
-    @Override
+//    @Override
     public void save(List<Dust> dusts) {
         log.info("dusts={}", dusts);
     }
 
-    @Override
+//    @Override
     public Dust searchDust(String stationName) {
         return null;
     }
 
-    @Override
+//    @Override
     public List<String> findStationNameByKeyword(String keyword) {
         return List.of();
     }
 
-    @Override
+//    @Override
     public void update(List<Dust> dusts) {
 
     }
 
-    @Override
+//    @Override
     public Map<Long, String> findAllSidoNames() {
         return Map.of();
     }
 
-    @Override
+//    @Override
     public void findAllDusts() {
 
     }

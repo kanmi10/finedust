@@ -115,14 +115,10 @@ public class MemberController {
     public Map<String, Object> getFavorites(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member) {
         Map<String, Object> response = new HashMap<>();
 
-        //회원X
-//        if (member == null) {
-//            response.put("success", false);
-//            response.put("message", "회원이 아닙니다.");
-//            return response;
-//        }
-
+        log.info("memberId={}", member.getId());
         Set<String> favorites = memberService.getFavorite(member.getId());
+
+
         response.put("success", true);
         response.put("favorites", favorites);
         log.info("favorites={}", favorites);

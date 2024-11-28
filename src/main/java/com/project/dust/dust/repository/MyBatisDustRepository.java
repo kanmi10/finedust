@@ -2,11 +2,13 @@ package com.project.dust.dust.repository;
 
 import com.project.dust.dust.Dust;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class MyBatisDustRepository implements DustRepository{
@@ -34,7 +36,9 @@ public class MyBatisDustRepository implements DustRepository{
     }
 
     @Override
-    public Map<Long, String> findAllSidoNames() {
+    public List<Map<Long, Object>> findAllSidoNames() {
+        List<Map<Long, Object>> allSidoNames = dustMapper.findAllSidoNames();
+        log.info("allSidoNames={}", allSidoNames);
         return dustMapper.findAllSidoNames();
     }
 
