@@ -118,48 +118,44 @@
      * 페이지 로드 시 시도명 selectBox 옵션 초기화
      */
     document.addEventListener("DOMContentLoaded", function () {
-
         const selectedSidoId = document.getElementById("sidoOption").value;
 
         fetch("/getSidoNames", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             }
         })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    const selectBox = document.getElementById("sidoId");
+                const selectBox = document.getElementById("sidoId");
 
-                    //Map 데이터를 순회
-                    Object.entries(data.data).forEach(([sidoId, sidoName]) => {
-                        const option = document.createElement("option");
-                        option.value = sidoId;
-                        option.textContent = sidoName;
+                //Map 데이터를 순회
+                data.forEach(region => {
+                    const option = document.createElement("option");
+                    option.value = region.sidoId;
+                    option.textContent = region.sidoName;
 
-                        // *** 선택된 시도 ID와 일치하면 selected 속성 추가 ***
-                        if (sidoId === selectedSidoId) {
-                            option.selected = true;
-                        }
+                    // *** 선택된 지역 ID와 일치하면 selected 속성 추가 ***
+                    if (region.sidoId === selectedSidoId) {
+                        option.selected = true;
+                    }
 
-                        selectBox.appendChild(option);
-                    });
+                    selectBox.appendChild(option);
+                });
 
-                    // *** select 박스 change 이벤트 리스너 추가 ***
-                    selectBox.addEventListener("change", function () {
-                        const selectedValue = selectBox.value;
+                // *** select 박스 change 이벤트 리스너 추가 ***
+                selectBox.addEventListener("change", function () {
+                    const selectedValue = selectBox.value;
 
-                        // 링크로 이동
-                        if (selectedValue) {
-                            location.href = `/board/list?sidoId=${selectedValue}`;
-                        }
-                    });
-
-                }
+                    // 링크로 이동
+                    if (selectedValue) {
+                        location.href = `/board/list?sidoId=${selectedValue}`;
+                    }
+                });
             }).catch(error => {
-            console.error("시도명 데이터를 가져오는 중 문제가 발생했습니다.", error);
-            alert("시도명 데이터를 불러오는데 실패했습니다.");
+            console.error("지역 데이터를 가져오는 중 문제가 발생했습니다.", error);
+            alert("지역 데이터를 불러오는데 실패했습니다.");
         });
     });
 </script>

@@ -36,9 +36,7 @@ public class MyBatisDustRepository implements DustRepository{
     }
 
     @Override
-    public List<Map<Long, Object>> findAllSidoNames() {
-        List<Map<Long, Object>> allSidoNames = dustMapper.findAllSidoNames();
-        log.info("allSidoNames={}", allSidoNames);
+    public List<RegionDTO> findAllSidoNames() {
         return dustMapper.findAllSidoNames();
     }
 

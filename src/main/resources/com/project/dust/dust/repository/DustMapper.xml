@@ -44,7 +44,7 @@
         </foreach>
     </update>
 
-    <select id="findAllSidoNames" resultType="map">
+    <select id="findAllSidoNames" resultType="RegionDTO">
         select sidoId, sidoName
         from REGION;
     </select>

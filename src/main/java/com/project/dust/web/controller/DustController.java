@@ -1,6 +1,7 @@
 package com.project.dust.web.controller;
 
 import com.project.dust.dust.Dust;
+import com.project.dust.dust.repository.RegionDTO;
 import com.project.dust.dust.service.DustService;
 import com.project.dust.member.Member;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,14 +60,14 @@ public class DustController {
         return dustService.findStationsByName(stationName);
     }
 
+    /**
+     * 지역 데이터(지역ID, 지역명) 조회
+     * @return List<RegionDTO> 지역정보 리스트
+     */
     @ResponseBody
-    @GetMapping("/getSidoNames")
-    public Map<String, Object> getSidoNames() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("data", dustService.fetchSidoNames());
-        log.info("fetchSidoNames={}", dustService.fetchSidoNames());
-        return response;
+    @PostMapping("/getSidoNames")
+    public List<RegionDTO> getSidoNames() {
+        return dustService.fetchSidoNames();
     }
 
 }

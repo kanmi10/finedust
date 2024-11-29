@@ -21,14 +21,15 @@
 
         <div class="mb-3">
             <label for="sidoId" class="form-label">시도명</label>
-            <select class="form-select form-select-sm" id="sidoId" th:field="*{sidoId}" style="width: 30%" >
-                <option value="" disabled selected id="sidoOption" th:value="${boardForm.sidoId}" >시도를 선택하세요</option>
+            <select class="form-select form-select-sm" id="sidoId" th:field="*{sidoId}" style="width: 30%">
+                <option value="" disabled selected id="sidoOption" th:value="${boardForm.sidoId}">시도를 선택하세요</option>
             </select>
         </div>
         <!-- 제목 -->
         <div class="mb-3">
             <label for="title" class="form-label">제목</label>
-            <input type="text" th:errorclass="border-danger" th:field="*{title}" class="form-control" id="title" placeholder="제목을 입력하세요">
+            <input type="text" th:errorclass="border-danger" th:field="*{title}" class="form-control" id="title"
+                   placeholder="제목을 입력하세요">
             <div class="text-danger" th:errors="*{title}">
                 제목을 입력해주세요.
             </div>
@@ -37,7 +38,8 @@
         <!-- 내용 -->
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
-            <textarea class="form-control" th:errorclass="border-danger" th:field="*{content}" id="content" rows="5" placeholder="내용을 입력하세요"></textarea>
+            <textarea class="form-control" th:errorclass="border-danger" th:field="*{content}" id="content" rows="5"
+                      placeholder="내용을 입력하세요"></textarea>
             <div class="text-danger" th:errors="*{content}">
                 내용을 입력해주세요.
             </div>
@@ -46,7 +48,8 @@
         <!-- 버튼 그룹 -->
         <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-secondary me-2"
-                    th:onclick="|location.href='@{/board/detail/{boardId}(boardId=${boardForm.boardId})}'|">돌아가기</button>
+                    th:onclick="|location.href='@{/board/detail/{boardId}(boardId=${boardForm.boardId})}'|">돌아가기
+            </button>
             <button type="submit" class="btn btn-primary">수정</button>
         </div>
     </form>
@@ -60,34 +63,34 @@
      * 페이지 로드 시 시도명 selectBox 옵션 초기화
      */
     document.addEventListener("DOMContentLoaded", function () {
-
         const selectedSidoId = document.getElementById("sidoOption").value;
 
         fetch("/getSidoNames", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             }
         })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    const selectBox = document.getElementById("sidoId");
+                const selectBox = document.getElementById("sidoId");
 
-                    //Map 데이터를 순회
-                    Object.entries(data.data).forEach(([sidoId, sidoName]) => {
-                        const option = document.createElement("option");
-                        option.value = sidoId;
-                        option.textContent = sidoName;
+                data.forEach(region => {
+                    const option = document.createElement("option");
+                    option.value = region.sidoId;
+                    option.textContent = region.sidoName;
 
-                        // *** 선택된 시도 ID와 일치하면 selected 속성 추가 ***
-                        if (sidoId === selectedSidoId) {
-                            option.selected = true;
-                        }
+                    // console.log(typeof region.sidoId);
+                    // console.log(typeof selectedSidoId);
 
-                        selectBox.appendChild(option);
-                    });
-                }
+                    // *** 선택된 시도 ID와 일치하면 selected 속성 추가 ***
+                    // 형 변환 필수
+                    if (region.sidoId === parseInt(selectedSidoId)) {
+                        option.selected = true;
+                    }
+
+                    selectBox.appendChild(option);
+                });
             }).catch(error => {
             console.error("시도명 데이터를 가져오는 중 문제가 발생했습니다.", error);
             alert("시도명 데이터를 불러오는데 실패했습니다.");

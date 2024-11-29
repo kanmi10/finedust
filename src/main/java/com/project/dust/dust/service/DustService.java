@@ -2,6 +2,7 @@ package com.project.dust.dust.service;
 
 import com.project.dust.dust.Dust;
 import com.project.dust.dust.repository.DustRepository;
+import com.project.dust.dust.repository.RegionDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -224,20 +225,13 @@ public class DustService {
         return dustRepository.findStationNameByKeyword(stationName);
     }
 
-    public Map<Long, Object> fetchSidoNames() {
-        Map<Long, Object> regionMap = new HashMap<>();
+    public List<RegionDTO> fetchSidoNames() {
 
-        List<Map<Long, Object>> allSidoNames = dustRepository.findAllSidoNames();
+        List<RegionDTO> regionInfo = dustRepository.findAllSidoNames();
 
-        for (int i = 0; i < allSidoNames.size(); i++) {
-            Map<Long, Object> longObjectMap = allSidoNames.get(i);
-            log.info("longObjectMap={}", longObjectMap);
-            Long key = (Long) longObjectMap.get("sidoId");
-            Object value = longObjectMap.get("sidoName");
-            regionMap.put(key, value);
-        }
+        log.info("regionInfo={}", regionInfo);
 
-        return regionMap;
+        return regionInfo;
     }
 
 }

@@ -25,6 +25,9 @@
 <footer th:replace="~{/fragment/footer/footer :: footer(${member})}"></footer>
 
 <div th:replace="~{/fragment/script/searchDropdownScript}"></div>
-<div th:replace="~{/fragment/script/bookmarkScript}"></div>
+<!--북마크 기능(회원전용)-->
+<div th:if="${member != null}">
+    <div th:replace="~{/fragment/script/bookmarkScript}"></div>
+</div>
 </body>
 </html>

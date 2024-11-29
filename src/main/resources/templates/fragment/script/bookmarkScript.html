@@ -4,7 +4,7 @@
         fetchFavorites();
     });
 
-    document.getElementById("bookmark-button").addEventListener("click", function () {
+    document.getElementById("bookmark-button").addEventListener('click', function () {
         fetch("/members/getFavorites", {
             method: "POST",
             headers: {
