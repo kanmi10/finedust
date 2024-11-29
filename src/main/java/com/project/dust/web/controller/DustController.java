@@ -11,9 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static com.project.dust.web.SessionConst.LOGIN_MEMBER;
 
@@ -37,15 +36,21 @@ public class DustController {
             return "redirect:/";
         }
 
-        Dust dust = dustService.searchDust(search);
-        log.info("controller.dust={}", dust);
-        model.addAttribute("dust", dust);
+        Dust dust;
+
+        try {
+            dust = dustService.searchDust(search);
+        } catch (NoSuchElementException e) {
+            return "redirect:/";
+        }
 
         if (member == null) {
             return "home";
         }
 
+        model.addAttribute("dust", dust);
         model.addAttribute("member", member);
+
         return "home";
     }
 
@@ -57,6 +62,11 @@ public class DustController {
     @ResponseBody
     @GetMapping("/searchStations")
     public List<String> searchStations(@RequestParam("stationName") String stationName) {
+        // 스페이스 입력 시 출력X
+        if (!StringUtils.hasText(stationName)) {
+            return null;
+        }
+
         return dustService.findStationsByName(stationName);
     }
 
