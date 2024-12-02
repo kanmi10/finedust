@@ -1,6 +1,7 @@
 package com.project.dust.domain.board;
 
 import com.project.dust.board.Board;
+import com.project.dust.board.BoardSearchDTO;
 import com.project.dust.board.repository.BoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -23,17 +24,9 @@ import java.util.List;
 @SpringBootTest
 class BoardRepositoryTest {
 
-    @Autowired
-    private DataSource dataSource;
 
     @Autowired
     private BoardRepository boardRepository;
-
-
-//    @BeforeEach
-//    void setUp() {
-//        boardRepository.deleteAll(); // 테스트 데이터 초기화
-//    }
 
 
     @Test
@@ -56,44 +49,13 @@ class BoardRepositoryTest {
         boardRepository.save(board2);
 
         //when
-//        List<Board> boards = boardRepository.findBoards();
-//        log.info("boards={}", boards);
 
-//        //then
+        //then
 //        Assertions.assertThat(boards).hasSize(2);
 //        Assertions.assertThat(boards.stream().anyMatch(board -> board.getTitle().equals("테스트 게시물입니다1.")));
     }
 
-    @Test
-    @DisplayName("잘못된 컬럼명 테스트")
-    void wrongColumn() {
-        String sql = "select * from board";
 
-        SQLExceptionTranslator exTranslator = new CustomSQLExceptionTranslator(dataSource);
-
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            con = dataSource.getConnection();
-            pstmt = con.prepareStatement(sql);
-            rs = pstmt.executeQuery(sql);
-
-            while (rs.next()) {
-                log.info("rs.getString(잘못된 컬럼명) {}", rs.getString("잘못된 컬럼명"));
-            }
-
-        } catch (SQLException e) {
-            log.error("SQL State: {}, Error Code: {}, Message: {}", e.getSQLState(), e.getErrorCode(), e.getMessage());
-            DataAccessException resultEx = exTranslator.translate("findAll", sql, e);
-            log.info("에외 메세지={}", resultEx.getMessage());
-        } finally {
-            JdbcUtils.closeResultSet(rs);
-            JdbcUtils.closeStatement(pstmt);
-            JdbcUtils.closeConnection(con);
-        }
-    }
 
     @Test
     @DisplayName("전체 게시글 개수")

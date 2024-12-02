@@ -6,8 +6,6 @@ import lombok.ToString;
 
 @Getter @Setter @ToString
 public class RegionDTO {
-
     private Long sidoId;
     private String sidoName;
-
 }

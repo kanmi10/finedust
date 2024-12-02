@@ -30,7 +30,8 @@ public class DustController {
      */
     @GetMapping("/search")
     public String searchDust(@SessionAttribute(name = LOGIN_MEMBER, required = false) Member member,
-                             @RequestParam("searchWord") String search, Model model) {
+                             @RequestParam("searchWord") String search,
+                             Model model) {
 
         if (!StringUtils.hasText(search)) {
             return "redirect:/";
@@ -42,10 +43,6 @@ public class DustController {
             dust = dustService.searchDust(search);
         } catch (NoSuchElementException e) {
             return "redirect:/";
-        }
-
-        if (member == null) {
-            return "home";
         }
 
         model.addAttribute("dust", dust);

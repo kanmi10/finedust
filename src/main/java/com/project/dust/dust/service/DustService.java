@@ -20,10 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -39,9 +36,14 @@ public class DustService {
 
     // 같은 connection 사용해야 함.
     public Dust searchDust(String search) {
-
         //1. 측정소명으로 대기오염 데이터를 조회하고 dust 객체에 담음
         Dust dust = dustRepository.searchDust(search);
+        log.info("DustService.dust={}", dust);
+
+        // 검색된 결과 없음
+        if (dust == null) {
+            throw new NoSuchElementException("검색된 결과가 없습니다.");
+        }
 
         //2. dust 객체에 담겨있는 측정일시와 사용자 데이터 요청일시를 비교
         LocalDateTime requestTime = LocalDateTime.now();
@@ -51,7 +53,7 @@ public class DustService {
 
         if (isDataOutOfDate(dataTime, requestTime)) {
             //3-1. 만약 오래된 데이터일 경우, API에서 데이터를 다시 가져와 DB 업데이트 한후 다시 대기오염 데이터를 조회해 dust 객체에 담음
-            log.info("오래된 데이터! 데이터 업데이트 시작합니다.");
+            log.info("오래된 데이터! 데이터 업데이트를 시작합니다.");
             update(dust.getSidoName());
             return dustRepository.searchDust(search);
         }
@@ -226,12 +228,7 @@ public class DustService {
     }
 
     public List<RegionDTO> fetchSidoNames() {
-
-        List<RegionDTO> regionInfo = dustRepository.findAllSidoNames();
-
-        log.info("regionInfo={}", regionInfo);
-
-        return regionInfo;
+        return dustRepository.findAllSidoNames();
     }
 
 }
