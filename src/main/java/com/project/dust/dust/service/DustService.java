@@ -1,9 +1,13 @@
 package com.project.dust.dust.service;
 
 import com.project.dust.dust.Dust;
+import com.project.dust.dust.repository.DustMapper;
 import com.project.dust.dust.repository.DustRepository;
 import com.project.dust.dust.repository.RegionDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,12 +33,13 @@ public class DustService {
     private static final List<Dust> dusts = new ArrayList<>();
     private static long sequence = 0L;
     private final DustRepository dustRepository;
+    private final SqlSessionFactory sqlSessionFactory;
 
-    public DustService(DustRepository dustRepository) {
+    public DustService(DustRepository dustRepository, SqlSessionFactory sqlSessionFactory) {
         this.dustRepository = dustRepository;
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
-    // 같은 connection 사용해야 함.
     public Dust searchDust(String search) {
         //1. 측정소명으로 대기오염 데이터를 조회하고 dust 객체에 담음
         Dust dust = dustRepository.searchDust(search);
@@ -45,16 +50,14 @@ public class DustService {
             throw new NoSuchElementException("검색된 결과가 없습니다.");
         }
 
-        //2. dust 객체에 담겨있는 측정일시와 사용자 데이터 요청일시를 비교
+        //2. dust 객체에 담겨있는 측정일시와 사용자 요청일시를 비교
         LocalDateTime requestTime = LocalDateTime.now();
-        log.info("requestTime={}", requestTime);
         LocalDateTime dataTime = dust.getDataTime();
-        log.info("dataTime={}", dataTime);
 
         if (isDataOutOfDate(dataTime, requestTime)) {
-            //3-1. 만약 오래된 데이터일 경우, API에서 데이터를 다시 가져와 DB 업데이트 한후 다시 대기오염 데이터를 조회해 dust 객체에 담음
+            //3-1. 오래된 데이터일 경우, API에서 데이터를 다시 가져와 DB 업데이트 한후 다시 대기오염 데이터를 조회해 dust 객체에 담음
             log.info("오래된 데이터! 데이터 업데이트를 시작합니다.");
-            update(dust.getSidoName());
+            batchUpdate(dust.getSidoName()); // MyBatis 배치 처리 update
             return dustRepository.searchDust(search);
         }
 
@@ -69,16 +72,46 @@ public class DustService {
         return between.toMinutes() >= 60;
     }
 
-    private void update(String sidoName) {
+    public void foreachUpdate(String sidoName) {
+        String jsonData = dustInit(sidoName);
+        apiJsonParser(jsonData);
+        
+        long startTime = System.currentTimeMillis();
+        dustRepository.foreachUpdate(dusts);
+        long endTime = System.currentTimeMillis();
+        
+        log.info("다중 쿼리 update 걸린 시간: {}", (endTime - startTime) + "ms");
+    }
+
+
+    public void loopUpdate(String sidoName) {
         String jsonData = dustInit(sidoName);
         apiJsonParser(jsonData);
 
-        log.info("API 가져온 데이터={}", dusts);
-        log.info("API 데이터 개수={}", dusts.size());
-
-        dustRepository.update(dusts);
+        long startTime = System.currentTimeMillis();
+        for (Dust dust : dusts) {
+            dustRepository.loopUpdate(dust);
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("단일 쿼리 update 걸린 시간: {}", (endTime - startTime) + "ms");
     }
 
+    public void batchUpdate(String sidoName) {
+        String jsonData = dustInit(sidoName);
+        apiJsonParser(jsonData);
+
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        DustMapper mapper = sqlSession.getMapper(DustMapper.class);
+
+        long startTime = System.currentTimeMillis();
+        for (Dust dust : dusts) {
+            mapper.loopUpdate(dust);
+        }
+        sqlSession.flushStatements();
+        sqlSession.commit();
+        long endTime = System.currentTimeMillis();
+        log.info("배치 update 걸린 시간: {}", (endTime - startTime) + "ms");
+    }
 
     public void init(String sidoName)  {
         //API 요청
@@ -87,8 +120,14 @@ public class DustService {
         //API 반환 JSON 파싱
         apiJsonParser(apiJsonData);
 
+        long startTime = System.currentTimeMillis();
         //DB 저장
-        dustRepository.save(dusts);
+        for (Dust dust : dusts) {
+            dustRepository.save(dust);
+        }
+        long endTime = System.currentTimeMillis();
+
+        log.info("걸린 시간: {}", (endTime - startTime) + "ms");
     }
 
     private void apiJsonParser(String apiJsonData) {
@@ -116,6 +155,7 @@ public class DustService {
          *     private Integer pm25Value;      //초미세먼지(PM25 농도)
          *     private Integer no2Value;       //이산화질소 농도
          */
+
         for (int i = 0; i < items.size(); i++) {
             String sidoName = (String) ((JSONObject) items.get(i)).get("sidoName");
             String stationName = (String) ((JSONObject) items.get(i)).get("stationName");
@@ -154,6 +194,7 @@ public class DustService {
          * 시도명	            sidoName	10	필수	서울	시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)
          * 오퍼레이션 버전	    ver	        4	옵션	1.0	버전별 상세 결과 참고
          */
+
         /*URL*/
         return "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty" + "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=VvAbEIzs7k39WC7z6EbjgcZyXFWCBcR5Da8Kugfd1OXp1WRG7LieBQqDHSIaRgFOHEE62zzCgLqST%2F22LMwHww%3D%3D" + /*Service Key*/
                 "&" + URLEncoder.encode("returnType", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("json", StandardCharsets.UTF_8) + /*xml 또는 json*/
@@ -182,7 +223,6 @@ public class DustService {
             }
 
             // 요청 결과 출력을 위한 준비
-
             String line;
             while ((line = rd.readLine()) != null) {
                 sb.append(line);
@@ -193,6 +233,7 @@ public class DustService {
             conn.disconnect();
 
         } catch (IOException e) {
+            log.error("대기오염 데이터 초기화 실패", e);
             throw new RuntimeException(e);
         }
 

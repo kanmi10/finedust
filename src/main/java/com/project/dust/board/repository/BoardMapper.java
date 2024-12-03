@@ -16,6 +16,8 @@ public interface BoardMapper {
 
     List<Board> findBoards(BoardSearchDTO boardSearchDTO);
 
+    List<Board> findAllBoards(BoardSearchDTO boardSearchDTO);
+
     int countAllBoards(BoardSearchDTO boardSearchDTO);
 
     Optional<Board> findById(Long boardId);

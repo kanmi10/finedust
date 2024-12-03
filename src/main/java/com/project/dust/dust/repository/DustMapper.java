@@ -4,20 +4,23 @@ import com.project.dust.dust.Dust;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface DustMapper {
 
-    void save(List<Dust> dusts);
+    void save(Dust dust);
 
     Dust searchDust(String stationName);
 
+    Dust getDustById(Long stationId);
+
     List<String> findStationNameByKeyword(String keyword);
 
-    void update(List<Dust> dusts);
+    void foreachUpdate(List<Dust> dusts);
+
+    void loopUpdate(Dust dust);
 
     List<RegionDTO> findAllSidoNames();
 
-    void findAllDusts();
+    Long getSidoId(String sidoName);
 }

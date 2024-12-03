@@ -31,6 +31,11 @@ public class MyBatisBoardRepository implements BoardRepository {
         return boardMapper.findBoards(boardSearchDTO);
     }
 
+    @Override
+    public List<Board> findAllBoards(BoardSearchDTO boardSearchDTO) {
+        return boardMapper.findAllBoards(boardSearchDTO);
+    }
+
 
     @Override
     public int countAllBoards(BoardSearchDTO boardSearchDTO) {

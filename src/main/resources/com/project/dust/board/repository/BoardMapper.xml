@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.dust.board.repository.BoardMapper">
-    <insert id="save">
+    <insert id="save" useGeneratedKeys="true" keyProperty="boardId">
         insert into BOARD (sidoId, memberId, title, content)
         values (#{sidoId}, #{memberId}, #{title}, #{content});
     </insert>
+
     <update id="update">
         update BOARD
-        set sidoId = #{sidoId}, title = #{title}, content = #{content}
+        set sidoId = #{sidoId},
+            title = #{title},
+            content = #{content}
         where boardId = #{boardId} and memberId = #{memberId};
     </update>
+
     <select id="findBoards" resultType="Board">
         select
             boardId,
@@ -44,6 +48,41 @@
         </where>
         order by boardId desc
             limit #{limit} offset #{offset};
+    </select>
+
+    <select id="findAllBoards" resultType="Board">
+        select
+        boardId,
+        R.sidoId,
+        sidoName,
+        M.memberId,
+        name,
+        title,
+        content,
+        created_date
+        from BOARD
+        join MEMBER M on M.memberId = BOARD.memberId
+        join REGION R on R.sidoId = BOARD.sidoId
+        <where>
+            <if test="sidoId != null and sidoId != ''">
+                and R.sidoId = #{sidoId}
+            </if>
+            <if test="searchWord != null and searchWord != ''">
+                <if test="searchType == 1">
+                    and title like concat ('%', #{searchWord}, '%')
+                </if>
+                <if test="searchType == 2">
+                    and content like concat ('%', #{searchWord}, '%')
+                </if>
+                <if test="searchType == 3">
+                    and name like concat ('%', #{searchWord}, '%')
+                </if>
+                <if test="searchType == 4">
+                    and title like concat ('%', #{searchWord}, '%') or content like concat ('%', #{searchWord}, '%')
+                </if>
+            </if>
+        </where>
+        order by boardId desc;
     </select>
 
     <select id="countAllBoards">
@@ -99,7 +138,5 @@
         delete from BOARD
         where boardId = #{boardId};
     </delete>
-
-
 
 </mapper>

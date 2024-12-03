@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.dust.dust.repository.DustMapper">
+
     <insert id="save">
         INSERT INTO DUST (stationId, sidoId, stationName, dataTime, pm10Value, pm25Value, no2Value)
         VALUES
-        <foreach collection="list" item="dust" separator=",">
-            (#{dust.stationId},
-            #{dust.sidoId},
-            #{dust.stationName},
-            #{dust.dataTime},
-            #{dust.pm10Value},
-            #{dust.pm25Value},
-            #{dust.no2Value})
-        </foreach>
+            (#{stationId},
+            ( SELECT sidoId
+              FROM REGION
+              WHERE sidoName = #{sidoName}),
+            #{stationName},
+            #{dataTime},
+            #{pm10Value},
+            #{pm25Value},
+            #{no2Value});
     </insert>
 
+    <select id="getSidoId" resultType="Long">
+        SELECT sidoId
+        FROM REGION
+        WHERE sidoName = #{sidoName};
+    </select>
+
     <select id="searchDust" resultType="Dust">
-        select stationName,
+        select stationId,
+               stationName,
                sidoName,
                dataTime,
                pm10Value,
@@ -27,13 +35,26 @@
         where stationName = #{stationName};
     </select>
 
+    <select id="getDustById" resultType="Dust">
+        select stationId,
+               stationName,
+               sidoName,
+               dataTime,
+               pm10Value,
+               pm25Value,
+               no2Value
+        from DUST
+                 join REGION on REGION.sidoId = DUST.sidoId
+        where stationId = #{stationId};
+    </select>
+
     <select id="findStationNameByKeyword" resultType="String">
         select stationName
         from DUST
         where stationName like concat(#{keyword}, '%');
     </select>
 
-    <update id="update" parameterType="List">
+    <update id="foreachUpdate" parameterType="List">
         <foreach collection="list" item="dust" separator=";">
             update DUST
             set dataTime = #{dust.dataTime},
@@ -42,6 +63,15 @@
                 no2Value = #{dust.no2Value, jdbcType=DOUBLE}
             where stationName = #{dust.stationName}
         </foreach>
+    </update>
+
+    <update id="loopUpdate">
+        update DUST
+        set dataTime = #{dataTime},
+            pm10Value = #{pm10Value, jdbcType=INTEGER},
+            pm25Value = #{pm25Value, jdbcType=INTEGER},
+            no2Value = #{no2Value, jdbcType=DOUBLE}
+        where stationName = #{stationName};
     </update>
 
     <select id="findAllSidoNames" resultType="RegionDTO">

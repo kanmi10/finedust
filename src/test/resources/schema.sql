@@ -41,3 +41,22 @@ ALTER TABLE BOOKMARK ADD CONSTRAINT FK_BOOKMARK_MEMBER FOREIGN KEY (memberId) re
 ALTER TABLE DUST ADD CONSTRAINT FK_DUST_REGION FOREIGN KEY (sidoId) references REGION (sidoId);
 ALTER TABLE BOARD ADD CONSTRAINT FK_BOARD_REGION FOREIGN KEY (sidoId) references REGION (sidoId);
 ALTER TABLE BOARD ADD CONSTRAINT FK_BOARD_MEMBER FOREIGN KEY (memberId) references MEMBER (memberId);
+
+-- REGION 테이블 데이터 초기화
+INSERT INTO REGION (sidoId, sidoName) values (1, '서울');
+INSERT INTO REGION (sidoId, sidoName) values (2, '부산');
+INSERT INTO REGION (sidoId, sidoName) values (3, '대구');
+INSERT INTO REGION (sidoId, sidoName) values (4, '인천');
+INSERT INTO REGION (sidoId, sidoName) values (5, '광주');
+INSERT INTO REGION (sidoId, sidoName) values (6, '대전');
+INSERT INTO REGION (sidoId, sidoName) values (7, '울산');
+INSERT INTO REGION (sidoId, sidoName) values (8, '경기');
+INSERT INTO REGION (sidoId, sidoName) values (9, '강원');
+INSERT INTO REGION (sidoId, sidoName) values (10, '충북');
+INSERT INTO REGION (sidoId, sidoName) values (11, '충남');
+INSERT INTO REGION (sidoId, sidoName) values (12, '전북');
+INSERT INTO REGION (sidoId, sidoName) values (13, '전남');
+INSERT INTO REGION (sidoId, sidoName) values (14, '경북');
+INSERT INTO REGION (sidoId, sidoName) values (15, '경남');
+INSERT INTO REGION (sidoId, sidoName) values (16, '제주');
+INSERT INTO REGION (sidoId, sidoName) values (17, '세종');

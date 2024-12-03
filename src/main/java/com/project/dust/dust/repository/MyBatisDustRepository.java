@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Repository
@@ -16,8 +15,8 @@ public class MyBatisDustRepository implements DustRepository{
     private final DustMapper dustMapper;
 
     @Override
-    public void save(List<Dust> dusts) {
-        dustMapper.save(dusts);
+    public void save(Dust dust) {
+        dustMapper.save(dust);
     }
 
     @Override
@@ -26,13 +25,23 @@ public class MyBatisDustRepository implements DustRepository{
     }
 
     @Override
+    public Dust getDustById(Long stationId) {
+        return dustMapper.getDustById(stationId);
+    }
+
+    @Override
     public List<String> findStationNameByKeyword(String keyword) {
         return dustMapper.findStationNameByKeyword(keyword);
     }
 
     @Override
-    public void update(List<Dust> dusts) {
-        dustMapper.update(dusts);
+    public void foreachUpdate(List<Dust> dusts) {
+        dustMapper.foreachUpdate(dusts);
+    }
+
+    @Override
+    public void loopUpdate(Dust dust) {
+        dustMapper.loopUpdate(dust);
     }
 
     @Override
@@ -40,8 +49,9 @@ public class MyBatisDustRepository implements DustRepository{
         return dustMapper.findAllSidoNames();
     }
 
+
     @Override
-    public void findAllDusts() {
-        dustMapper.findAllDusts();
+    public Long getSidoId(String sidoName) {
+        return dustMapper.getSidoId(sidoName);
     }
 }

@@ -76,7 +76,7 @@ class DustRepositoryTest {
 
     @Test
     @DisplayName("대기오염 데이터 update")
-    void update() {
+    void foreachUpdate() {
         Dust dust = new Dust();
         dust.setStationId(1L);
         dust.setStationName("테스트측정소1");
@@ -98,7 +98,7 @@ class DustRepositoryTest {
         List<Dust> dusts = List.of(updateDust);
 
         dustRepository.save(updateDust);
-        dustRepository.update(dusts);
+        dustRepository.foreachUpdate(dusts);
 
         Dust findDust = dustRepository.getDustById(dust.getStationId());
         assertThat(updateDust).isEqualTo(findDust);

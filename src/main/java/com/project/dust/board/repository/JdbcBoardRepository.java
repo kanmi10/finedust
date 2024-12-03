@@ -177,12 +177,17 @@ public class JdbcBoardRepository implements BoardRepository {
         }
     }
 
-//    @Override
+    @Override
     public List<Board> findBoards(BoardSearchDTO boardSearchDTO) {
         return List.of();
     }
 
-//    @Override
+    @Override
+    public List<Board> findAllBoards(BoardSearchDTO boardSearchDTO) {
+        return List.of();
+    }
+
+    //    @Override
     public int countAllBoards() {
         String sql = "SELECT COUNT(*) FROM BOARD";
 

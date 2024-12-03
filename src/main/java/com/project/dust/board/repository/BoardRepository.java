@@ -13,6 +13,7 @@ public interface BoardRepository {
     //Read
     Optional<Board> findById(Long boardId);
     List<Board> findBoards(BoardSearchDTO boardSearchDTO);
+    List<Board> findAllBoards(BoardSearchDTO boardSearchDTO);
     String getSidoName(Long sidoId);
 
     int countAllBoards(BoardSearchDTO boardSearchDTO);

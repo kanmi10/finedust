@@ -122,7 +122,6 @@ public class BoardController {
 
     @PostMapping("/update/{boardId}")
     public String update(@ModelAttribute("boardForm") BoardEditForm boardEditForm) {
-
         Board board = new Board();
         board.setBoardId(boardEditForm.getBoardId());
         board.setTitle(boardEditForm.getTitle());
