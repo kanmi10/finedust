@@ -196,7 +196,7 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Long getStationName(String stationName) {
+    public Long getStationId(String stationName) {
         String sql = "select stationId from DUST where stationName = ?";
 
         Connection con = null;
@@ -223,7 +223,7 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Long hasFavoriteForStation(Long memberId, Long stationId) {
+    public Long getBookmarkId(Long memberId, Long stationId) {
         String sql = "select bookmarkId from BOOKMARK where memberId = ? and stationId = ?";
 
         Connection con = null;
@@ -374,6 +374,11 @@ public class JdbcMemberRepository implements MemberRepository {
             close(con, pstmt, rs);
         }
 
+    }
+
+    @Override
+    public boolean isBookmarks(Long memberId, Long stationId) {
+        return false;
     }
 
 

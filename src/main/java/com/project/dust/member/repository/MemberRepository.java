@@ -22,9 +22,9 @@ public interface MemberRepository {
 
     void removeFavorite(Long bookmarkId);
 
-    Long getStationName(String stationName);
+    Long getStationId(String stationName);
 
-    Long hasFavoriteForStation(Long memberId, Long stationId);
+    Long getBookmarkId(Long memberId, Long stationId);
 
     Set<String> getFavorites(Long memberId);
 
@@ -33,4 +33,6 @@ public interface MemberRepository {
     boolean isMemberIdDuplicate(String loginId);
 
     boolean isWithdrawMember(String memberId);
+
+    boolean isBookmarks(Long memberId, Long stationId);
 }

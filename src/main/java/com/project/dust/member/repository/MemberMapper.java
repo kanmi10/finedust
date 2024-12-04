@@ -27,7 +27,9 @@ public interface MemberMapper {
 
     Long getStationName(String stationName);
 
-    Long hasFavoriteForStation(@Param("memberId") Long memberId, @Param("stationId") Long stationId);
+    Long getBookmarkId(@Param("memberId") Long memberId, @Param("stationId") Long stationId);
+
+    boolean isBookmarks(@Param("memberId") Long memberId, @Param("stationId") Long stationId);
 
     Set<String> getFavorites(Long memberId);
 

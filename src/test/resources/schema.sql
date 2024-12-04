@@ -1,3 +1,9 @@
+DROP TABLE if exists MEMBER CASCADE;
+DROP TABLE if exists DUST CASCADE;
+DROP TABLE if exists BOARD CASCADE;
+DROP TABLE if exists REGION CASCADE;
+DROP TABLE if exists BOOKMARK CASCADE;
+
 CREATE TABLE `MEMBER` (
                           `memberId`	BIGINT	    PRIMARY KEY AUTO_INCREMENT,
                           `loginId`	    VARCHAR(50)	NOT NULL,

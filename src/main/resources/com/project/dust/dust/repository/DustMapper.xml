@@ -79,4 +79,10 @@
         from REGION;
     </select>
 
+    <select id="getStationId">
+        select stationId
+        from DUST
+        where stationName = #{stationName};
+    </select>
+
 </mapper>

@@ -21,4 +21,6 @@ public interface DustRepository {
     List<RegionDTO> findAllSidoNames();
 
     Long getSidoId(String sidoName);
+
+    Long getStationId(String stationName);
 }

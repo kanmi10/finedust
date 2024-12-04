@@ -49,12 +49,12 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Long getStationName(String stationName) {
+    public Long getStationId(String stationName) {
         return 0L;
     }
 
     @Override
-    public Long hasFavoriteForStation(Long memberId, Long stationId) {
+    public Long getBookmarkId(Long memberId, Long stationId) {
         return 0L;
     }
 
@@ -75,6 +75,11 @@ public class MemoryMemberRepository implements MemberRepository {
 
     @Override
     public boolean isWithdrawMember(String memberId) {
+        return false;
+    }
+
+    @Override
+    public boolean isBookmarks(Long memberId, Long stationId) {
         return false;
     }
 

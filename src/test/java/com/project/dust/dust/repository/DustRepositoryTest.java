@@ -122,4 +122,27 @@ class DustRepositoryTest {
         Long sidoId = dustRepository.getSidoId("서울");
         assertThat(sidoId).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("측정소ID 조회")
+    void getStationId() {
+        Long stationId = 1L;
+        String stationName = "테스트측정소";
+
+
+        Dust dust = new Dust();
+        dust.setStationId(stationId);
+        dust.setStationName(stationName);
+        dust.setSidoName("서울");
+        dust.setPm10Value(10);
+        dust.setPm25Value(25);
+        dust.setNo2Value(0.2);
+        dust.setDataTime(LocalDateTime.now());
+
+        dustRepository.save(dust);
+
+        Long findId = dustRepository.getStationId(stationName);
+        assertThat(findId).isEqualTo(stationId);
+
+    }
 }

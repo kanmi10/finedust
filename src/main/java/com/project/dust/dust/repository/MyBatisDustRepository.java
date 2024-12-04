@@ -54,4 +54,9 @@ public class MyBatisDustRepository implements DustRepository{
     public Long getSidoId(String sidoName) {
         return dustMapper.getSidoId(sidoName);
     }
+
+    @Override
+    public Long getStationId(String stationName) {
+        return dustMapper.getStationId(stationName);
+    }
 }

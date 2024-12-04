@@ -53,13 +53,13 @@ public class MyBatisMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Long getStationName(String stationName) {
+    public Long getStationId(String stationName) {
         return memberMapper.getStationName(stationName);
     }
 
     @Override
-    public Long hasFavoriteForStation(Long memberId, Long stationId) {
-        return memberMapper.hasFavoriteForStation(memberId, stationId);
+    public Long getBookmarkId(Long memberId, Long stationId) {
+        return memberMapper.getBookmarkId(memberId, stationId);
     }
 
     @Override
@@ -80,5 +80,10 @@ public class MyBatisMemberRepository implements MemberRepository {
     @Override
     public boolean isWithdrawMember(String memberId) {
         return memberMapper.isWithdrawMember(memberId);
+    }
+
+    @Override
+    public boolean isBookmarks(Long memberId, Long stationId) {
+        return memberMapper.isBookmarks(memberId, stationId);
     }
 }

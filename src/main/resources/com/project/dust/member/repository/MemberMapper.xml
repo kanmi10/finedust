@@ -6,12 +6,12 @@
     </insert>
 
     <select id="findById" resultType="Member">
-        select memberId,
+        select memberId as id,
                loginId,
                password,
                name,
                is_deleted
-        from MEMBER where memeberId = #{id};
+        from MEMBER where memberId = #{id};
     </select>
 
     <select id="findByLoginId" resultType="Member">
@@ -44,17 +44,10 @@
     </insert>
 
     <delete id="removeFavorite">
-        delete from BOOKMARK
-               where bookmarkId = #{bookmarkdId};
+        delete from BOOKMARK where bookmarkId = #{bookmarkdId};
     </delete>
 
-    <select id="getStationName">
-        select stationId
-        from DUST
-        where stationName = #{stationName};
-    </select>
-
-    <select id="hasFavoriteForStation">
+    <select id="getBookmarkId">
         select bookmarkId
         from BOOKMARK
         where memberId = #{memberId} and stationId = #{stationId};
@@ -72,7 +65,7 @@
         select exists(
             select *
             from MEMBER
-            where memberId = #{name});
+            where name = #{name});
     </select>
 
     <select id="isMemberIdDuplicate">
@@ -86,6 +79,13 @@
         select is_deleted
         from MEMBER
         where loginId = #{loginId};
+    </select>
+
+    <select id="isBookmarks">
+        select exists(
+            select 1
+            from BOOKMARK
+            where memberId = #{memberId} and stationId = #{stationId});
     </select>
 
 </mapper>

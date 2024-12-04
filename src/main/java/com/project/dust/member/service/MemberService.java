@@ -1,10 +1,10 @@
 package com.project.dust.member.service;
 
+import com.project.dust.dust.repository.DustRepository;
 import com.project.dust.member.Member;
 import com.project.dust.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -16,6 +16,7 @@ import java.util.Set;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final DustRepository dustRepository;
 
     public void join(Member member) {
         memberRepository.save(member);
@@ -23,16 +24,16 @@ public class MemberService {
 
     public void addFavorite(Long memberId, String stationName) {
         //stationId를 먼저 가져와야 함
-        Long stationId = memberRepository.getStationName(stationName);
+        Long stationId = dustRepository.getStationId(stationName);
         log.info("stationId={}", stationId);
         memberRepository.addFavorite(stationId, memberId);
     }
 
     public void removeFavorite(Long memberId, String stationName) {
-        Long stationId = memberRepository.getStationName(stationName);
+        Long stationId = memberRepository.getStationId(stationName);
 
-        // 로그인한 회원이 해당 지역을 북마크했는지 확인
-        Long bookmarkId = memberRepository.hasFavoriteForStation(memberId, stationId);
+        // 로그인 회원이 해당 지역을 북마크했는지 확인
+        Long bookmarkId = memberRepository.getBookmarkId(memberId, stationId);
 
         if (bookmarkId != null) {
             memberRepository.removeFavorite(bookmarkId);
