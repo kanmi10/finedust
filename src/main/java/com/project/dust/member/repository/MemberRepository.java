@@ -35,4 +35,6 @@ public interface MemberRepository {
     boolean isWithdrawMember(String memberId);
 
     boolean isBookmarks(Long memberId, Long stationId);
+
+    Optional<Member> findByEmail(String email);
 }

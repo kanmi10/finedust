@@ -381,6 +381,11 @@ public class JdbcMemberRepository implements MemberRepository {
         return false;
     }
 
+    @Override
+    public Optional<Member> findByEmail(String email) {
+        return Optional.empty();
+    }
+
 
     private void close(Connection con, PreparedStatement stmt, ResultSet rs) {
         JdbcUtils.closeResultSet(rs);

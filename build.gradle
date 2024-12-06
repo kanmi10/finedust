@@ -48,6 +48,9 @@ dependencies {
 	//테스트에서 lombok 사용
 	testCompileOnly('org.projectlombok:lombok');
 	testAnnotationProcessor('org.projectlombok:lombok')
+
+	// 매일 인증 사용
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail'
 }
 
 tasks.named('test') {

@@ -83,6 +83,11 @@ public class MemoryMemberRepository implements MemberRepository {
         return false;
     }
 
+    @Override
+    public Optional<Member> findByEmail(String email) {
+        return Optional.empty();
+    }
+
     public void clearStore() {
         store.clear();
     }

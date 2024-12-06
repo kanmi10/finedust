@@ -1,9 +1,11 @@
 package com.project.dust.web.controller;
 
+import com.project.dust.mail.MailService;
 import com.project.dust.member.Member;
 import com.project.dust.member.MemberSaveForm;
 import com.project.dust.member.service.MemberService;
 import com.project.dust.web.validation.ValidationSequence;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +30,7 @@ import static com.project.dust.web.SessionConst.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MailService mailService;
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("member") Member member) {
@@ -123,6 +127,14 @@ public class MemberController {
         response.put("favorites", favorites);
         log.info("favorites={}", favorites);
         return response;
+    }
+
+    @ResponseBody
+    @PostMapping("/signup/email-validate")
+    public String mailConfirm(@RequestParam(value = "email", required = false) String email) throws MessagingException, UnsupportedEncodingException {
+        String code = mailService.sendSimpleMessage(email);
+        log.info("인증코드: {}", code);
+        return code;
     }
 
 }

@@ -86,4 +86,9 @@ public class MyBatisMemberRepository implements MemberRepository {
     public boolean isBookmarks(Long memberId, Long stationId) {
         return memberMapper.isBookmarks(memberId, stationId);
     }
+
+    @Override
+    public Optional<Member> findByEmail(String email) {
+        return Optional.empty();
+    }
 }
