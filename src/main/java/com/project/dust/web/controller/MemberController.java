@@ -1,5 +1,6 @@
 package com.project.dust.web.controller;
 
+import com.project.dust.mail.AuthCheckForm;
 import com.project.dust.mail.MailCheckForm;
 import com.project.dust.mail.MailService;
 import com.project.dust.member.EmailDTO;
@@ -179,13 +180,37 @@ public class MemberController {
         emailForm.setValid(true);
         emailForm.setDuplication(false);
 
-        httpSession.setAttribute("authCode", authCode);
-        log.info("인증번호 세션 발급: {}", httpSession.getAttribute("authCode"));
+        httpSession.setAttribute(AUTH_CODE, authCode);
 
         return emailForm;
     }
 
 
+    @ResponseBody
+    @PostMapping("/add/confirmCode")
+    public AuthCheckForm confirmCode(@RequestBody AuthCheckForm authCheckForm,
+                                              @SessionAttribute(name = AUTH_CODE, required = false) String authCode,
+                                              HttpSession httpSession) {
+
+        String inputCode = authCheckForm.getInputCode(); // 사용자 입력 코드
+
+        log.info("넘어온 데이터: {}", authCheckForm);
+        log.info("사용자 입력코드: {} | 발급 인증코드: {}", inputCode, authCode);
+
+        //입력코드와 인증코드가 다를 경우
+        if (!inputCode.equals(authCode)) {
+            authCheckForm.setValid(false);
+            return authCheckForm;
+        }
+
+        authCheckForm.setAuthCode(authCode);
+        authCheckForm.setValid(true);
+
+        // 인증 성공 후 세션 해제
+        httpSession.invalidate();
+
+        return authCheckForm;
+    }
 
     // 이메일이 빈칸이 아니고 정규표현식과 일치하는지 확인
     private boolean isValidEmail(String email) {
