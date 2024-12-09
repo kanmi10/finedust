@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="This is a login page template based on Bootstrap 5">
     <title>오늘미세어때?</title>
-    <link href="/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet" />
+    <link href="/css/styles.css" th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
 
 <body>
@@ -15,28 +15,55 @@
         <div class="row justify-content-sm-center h-100">
             <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
                 <div class="text-center my-5">
-                    <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" th:src="@{/assets/img/logo.png}" alt="logo" width="100" >
+                    <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
+                         th:src="@{/assets/img/logo.png}" alt="logo" width="100">
                 </div>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
                         <h1 class="fs-4 card-title fw-bold mb-4" th:text="#{label.signup}">회원가입</h1>
-                        <form th:object="${member}" method="POST" class="needs-validation" novalidate="" autocomplete="off" >
+                        <form th:object="${member}" method="POST" class="needs-validation" novalidate=""
+                              autocomplete="off">
                             <div class="mb-3">
-                                <input th:field="*{name}" th:errorclass="border-danger" type="text" class="form-control" autofocus th:placeholder="#{label.name}">
+                                <input th:field="*{name}" th:errorclass="border-danger" type="text" class="form-control"
+                                       autofocus th:placeholder="#{label.name}">
                                 <div th:errors="*{name}" class="text-danger">
                                     Name is required
                                 </div>
                             </div>
 
+                            <!-- 이메일 확인 -->
                             <div class="mb-3">
-                                <input th:field="*{loginId}" th:errorclass="border-danger" class="form-control" th:placeholder="#{label.id}">
-                                <div th:errors="*{loginId}" th:class="text-danger" >
-                                    ID is invalid
+                                <div class="d-flex align-items-center">
+                                    <input th:field="*{loginId}" th:errorclass="border-danger" class="form-control me-1"
+                                           id="email" value="email" th:placeholder="#{label.email}">
+                                    <!--
+                                        '인증' 버튼 누르면 3가지 기능 수행해야함.
+                                         1. 이메일 형식이 맞는지 체크
+                                         2. 이메일 중복 체크
+                                     -->
+                                    <button class="btn btn-outline-primary" type="button" id="email-button" style="width: 100px" onclick="sendEmail()">
+                                        인증
+                                    </button>
+                                </div>
+                                <div th:errors="*{loginId}" th:class="text-danger">
+                                    Email is invalid
                                 </div>
                             </div>
 
+                            <!--
+                            '확인' 버튼 누르면 다음 기능 수행해야함
+                            1. 발급한 인증번호 일치하는지
+                            -->
+                            <div class="mb-3 d-flex">
+                                <input type="text" class="form-control me-1" id="authCode" autofocus th:placeholder="#{label.auth}">
+                                <button class="btn btn-outline-primary" type="button" id="auth-button" style="width: 100px" onclick="codeConfirm()">
+                                    확인
+                                </button>
+                            </div>
+
                             <div class="mb-3">
-                                <input th:field="*{password}" th:errorclass="border-danger" type="password" class="form-control" th:placeholder="#{label.password}">
+                                <input th:field="*{password}" th:errorclass="border-danger" type="password"
+                                       class="form-control" th:placeholder="#{label.password}">
                                 <div th:errors="*{password}" th:class="text-danger">
                                     Password is required
                                 </div>
@@ -62,7 +89,69 @@
         </div>
     </div>
 </section>
+<script>
+    function sendEmail() {
+        const email = document.getElementById('email').value;
+        const authButton = document.getElementById('email-button');
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 주소 검증
 
-<script src="js/login.js"></script>
+        // 1. 입력 폼이 비어있는지 검증
+        if (!email || email.trim() === '') {
+            alert("이메일 주소를 입력해주세요.");
+            document.getElementById('email').focus();
+            return;
+        }
+
+        // 2. 이메일 형식이 맞는지 검증
+        if (!emailRegex.test(email)) {
+            alert("이메일 주소 형식을 확인해주세요.");
+            document.getElementById('email').focus();
+            return;
+        }
+
+        // 3. 중복 여부 확인 + 메일 전송
+        // {email=test@test.com}
+        fetch(`/members/add/email-validate`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'email': email})
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+                console.log("서버 응답 데이터:", data);
+
+                if (data.duplication) {
+                    alert("이미 등록된 이메일입니다.");
+                    return;
+                }
+
+                if (!data.valid) {
+                    alert("유효하지 않은 이메일 형식입니다.");
+                    return;
+                }
+
+                alert("인증코드를 발송했습니다.");
+                // 발송이 완료되면 '인증' 버튼 비활성화 및 발송 완료
+                authButton.disabled = true;
+                authButton.textContent = '발송 완료';
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("인증코드 발송 중 문제가 발생했습니다.")
+            });
+    }
+
+    function codeConfirm() {
+        const authCode = document.getElementById("authCode").value;
+
+        fetch()
+
+        // 세션에 유효시간 줘야 함.
+
+
+    }
+</script>
 </body>
 </html>

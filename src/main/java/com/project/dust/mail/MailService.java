@@ -1,6 +1,5 @@
 package com.project.dust.mail;
 
-import com.project.dust.member.repository.MemberRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -19,19 +18,12 @@ import java.util.Random;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-
-    private final MemberRepository memberRepository;
     private String authNum;
-
-    private void checkDuplicatedEmail(String email) {
-        memberRepository.findByEmail(email)
-                .ifPresent(member -> {throw new IllegalArgumentException();});
-    }
 
     public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
 
-        message.addRecipients(MimeMessage.RecipientType.TO, to); // 보내는 대상
+        message.addRecipients(MimeMessage.RecipientType.TO, to); // 받는 사람
         message.setSubject("회원가입 이메일 인증");
 
         StringBuilder sb = new StringBuilder();
@@ -55,10 +47,10 @@ public class MailService {
         StringBuffer key = new StringBuffer();
 
         for (int i = 0; i < 8; i++) { // 총 8자리 인증 번호 생성
-            int idx = random.nextInt(3); // 0~2 사이의 값을 랜덤하게 받아와 idx에 집어넣습니다
+            int idx = random.nextInt(3); // 0~2 사이의 랜던 값
 
-            // 0,1,2 값을 switchcase를 통해 꼬아버립니다.
-            // 숫자와 ASCII 코드를 이용합니다.
+            // 0,1,2 랜덤값 변환
+            // 숫자와 ASCII 코드를 이용
             switch (idx) {
                 case 0 :
                     // 0일 때, a~z 까지 랜덤 생성 후 key에 추가
@@ -84,12 +76,13 @@ public class MailService {
         authNum = createCode();
         log.info("생성 인증코드: {}", authNum);
 
-        MimeMessage message = createMessage(sendEmail);// 메일 발송
+        MimeMessage message = createMessage(sendEmail);
 
         try {
-            javaMailSender.send(message);
+            javaMailSender.send(message); // 메일 발송
         } catch (MailException e) {
             log.error("메일 에러", e);
+            throw e;
         }
         return authNum;
     }
