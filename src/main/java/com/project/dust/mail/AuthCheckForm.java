@@ -9,5 +9,4 @@ public class AuthCheckForm {
     private String inputCode;
     private String authCode;
     private boolean isValid;
-
 }

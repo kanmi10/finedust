@@ -37,7 +37,7 @@ public class MailService {
         sb.append("</body></html>");
 
         message.setText(sb.toString(), "utf-8", "html");
-        message.setFrom(new InternetAddress("kanmi100@gmail.com", "오늘미세어때?"));
+        message.setFrom(new InternetAddress("noreply.todaydust@gamil.com", "오늘미세어때?"));
 
         return message;
     }

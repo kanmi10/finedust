@@ -3,7 +3,6 @@ package com.project.dust.web.controller;
 import com.project.dust.mail.AuthCheckForm;
 import com.project.dust.mail.MailCheckForm;
 import com.project.dust.mail.MailService;
-import com.project.dust.member.EmailDTO;
 import com.project.dust.member.Member;
 import com.project.dust.member.MemberSaveForm;
 import com.project.dust.member.service.MemberService;
@@ -14,9 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -45,23 +44,27 @@ public class MemberController {
 
 
     @GetMapping("/add")
-    public String addForm(@ModelAttribute("member") Member member,
-                          @ModelAttribute("email") EmailDTO email) {
+    public String addForm(@ModelAttribute("member") Member member, HttpSession httpSession) {
+        httpSession.invalidate();
         return "members/addMemberForm";
     }
 
     @PostMapping("/add")
     public String save(@Validated(ValidationSequence.class) @ModelAttribute("member") MemberSaveForm form,
-                       BindingResult bindingResult) {
+                       BindingResult bindingResult,
+                       @SessionAttribute(name = PASS, required = false) boolean isPass,
+                       HttpSession httpSession) {
 
-        // 아이디 중복검사
-        if (memberService.checkIdDuplicate(form.getLoginId())) {
-            bindingResult.rejectValue("loginId", "Duplicate");
-        }
+        log.info("isPass: {} ", isPass);
 
         // 이름 중복검사
         if (memberService.checkNameDuplicate(form.getName())) {
             bindingResult.rejectValue("name", "Duplicate");
+        }
+
+        // 이메일 인증검사
+        if (!isPass) {
+            bindingResult.rejectValue("loginId", "auth");
         }
 
         if (bindingResult.hasErrors()) {
@@ -74,7 +77,13 @@ public class MemberController {
         member.setName(form.getName());
         member.setPassword(form.getPassword());
 
+        log.info("Member: {}", member);
+
         memberService.join(member);
+
+        //세션 무효화
+        //authCode(인증번호), pass(인증결과) 세션 제거
+        httpSession.invalidate();
 
         return "redirect:/";
     }
@@ -141,7 +150,8 @@ public class MemberController {
 
     @ResponseBody
     @PostMapping("/add/email-validate")
-    public MailCheckForm mailConfirm(@RequestBody MailCheckForm emailForm, HttpSession httpSession) {
+    public MailCheckForm mailConfirm(@RequestBody MailCheckForm emailForm,
+                                     HttpServletRequest request) {
         String email = emailForm.getEmail();
 
         log.info("입력 이메일: {}", email);
@@ -180,7 +190,8 @@ public class MemberController {
         emailForm.setValid(true);
         emailForm.setDuplication(false);
 
-        httpSession.setAttribute(AUTH_CODE, authCode);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(AUTH_CODE, authCode);
 
         return emailForm;
     }
@@ -189,25 +200,28 @@ public class MemberController {
     @ResponseBody
     @PostMapping("/add/confirmCode")
     public AuthCheckForm confirmCode(@RequestBody AuthCheckForm authCheckForm,
-                                              @SessionAttribute(name = AUTH_CODE, required = false) String authCode,
-                                              HttpSession httpSession) {
+                                     @SessionAttribute(name = AUTH_CODE, required = false) String authCode,
+                                     HttpServletRequest request) {
 
         String inputCode = authCheckForm.getInputCode(); // 사용자 입력 코드
 
         log.info("넘어온 데이터: {}", authCheckForm);
         log.info("사용자 입력코드: {} | 발급 인증코드: {}", inputCode, authCode);
 
-        //입력코드와 인증코드가 다를 경우
+        //입력코드와 인증코드 불일치
         if (!inputCode.equals(authCode)) {
+            log.info("인증코드가 일치하지 않습니다.");
             authCheckForm.setValid(false);
             return authCheckForm;
         }
 
-        authCheckForm.setAuthCode(authCode);
-        authCheckForm.setValid(true);
+        //입력코드와 인증코드 일치
+        authCheckForm.setAuthCode(authCode);// 인증코드 필드 저장
+        authCheckForm.setValid(true);       // 인증 통과 필드 저장
 
-        // 인증 성공 후 세션 해제
-        httpSession.invalidate();
+        // 인증 절차 통과 세션 발급
+        HttpSession session = request.getSession(true);
+        session.setAttribute(PASS, true);
 
         return authCheckForm;
     }

@@ -16,7 +16,7 @@
             <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
                 <div class="text-center my-5">
                     <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
-                         th:src="@{/assets/img/logo.png}" alt="logo" width="100">
+                         th:src="@{/assets/img/logo.png}" alt="logo" width="100" onclick="location.href='/'">
                 </div>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
@@ -32,31 +32,27 @@
                             </div>
 
                             <!-- 이메일 확인 -->
-                            <div class="mb-3">
+                            <div class="mb-3" id="emailForm" >
                                 <div class="d-flex align-items-center">
                                     <input th:field="*{loginId}" th:errorclass="border-danger" class="form-control me-1"
-                                           id="email" value="email" th:placeholder="#{label.email}">
-                                    <!--
-                                        '인증' 버튼 누르면 3가지 기능 수행해야함.
-                                         1. 이메일 형식이 맞는지 체크
-                                         2. 이메일 중복 체크
-                                     -->
-                                    <button class="btn btn-outline-primary" type="button" id="email-button" style="width: 100px" onclick="sendEmail()">
+                                           th:placeholder="#{label.email}" th:readonly="${session.pass == true}">
+                                    <button class="btn btn-outline-primary" type="button" id="email-button" style="width: 100px" onclick="sendEmail()" th:disabled="${session.pass == true}">
                                         인증
                                     </button>
                                 </div>
                                 <div th:errors="*{loginId}" th:class="text-danger">
                                     Email is invalid
                                 </div>
+                                <!-- 이메일 검증이 완료되면 문구 추가-->
+                                <div th:if="${session.pass == true}" id="successMessage" class="text-primary">
+                                    인증이 완료됐습니다!
+                                </div>
                             </div>
 
-                            <!--
-                            '확인' 버튼 누르면 다음 기능 수행해야함
-                            1. 발급한 인증번호 일치하는지
-                            -->
-                            <div class="mb-3 d-flex">
+                            <!-- 인증 세션 값이 없거나 검증 로직을 통과하지 못했을 때 추가 -->
+                            <div class="mb-3 d-flex" th:if="${session.pass == null} or ${session.pass != true}">
                                 <input type="text" class="form-control me-1" id="authCode" autofocus th:placeholder="#{label.auth}">
-                                <button class="btn btn-outline-primary" type="button" id="auth-button" style="width: 100px" onclick="codeConfirm()">
+                                <button class="btn btn-outline-primary" type="button" id="auth-button" style="width: 100px" onclick="codeConfirm()" disabled>
                                     확인
                                 </button>
                             </div>
@@ -91,24 +87,30 @@
 </section>
 <script>
     function sendEmail() {
-        const emailForm = document.getElementById('email');
-        const email = document.getElementById('email').value;
-        const authButton = document.getElementById('email-button');
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 주소 검증
+        const emailForm = document.getElementById('loginId');         // 이메일 입력 폼
+        const email = document.getElementById('loginId').value;       // 입력한 이메일
+        const authButton = document.getElementById('email-button');   // '인증' 버튼
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 검증 정규표현식
 
         // 1. 입력 폼이 비어있는지 검증
         if (!email || email.trim() === '') {
             alert("이메일 주소를 입력해주세요.");
-            document.getElementById('email').focus();
+            emailForm.focus();
             return;
         }
 
         // 2. 이메일 형식이 맞는지 검증
         if (!emailRegex.test(email)) {
             alert("이메일 주소 형식을 확인해주세요.");
-            document.getElementById('email').focus();
+            emailForm.focus();
             return;
         }
+
+        // 클릭 이벤트 중복 방지
+        // 이메일 발송이 완료될 때까지 딜레이 존재
+        emailForm.readOnly = true;
+        authButton.disabled = true;
+
 
         // 3. 중복 여부 확인 + 메일 전송
         // {email=test@test.com}
@@ -124,20 +126,23 @@
                 console.log("서버 응답 데이터:", data);
 
                 if (data.duplication) {
+                    emailForm.readOnly = false;
+                    authButton.disabled = false;
                     alert("이미 등록된 이메일입니다.");
                     return;
                 }
 
                 if (!data.valid) {
+                    emailForm.readOnly = false;
+                    authButton.disabled = false;
                     alert("유효하지 않은 이메일 형식입니다.");
                     return;
                 }
 
                 alert("인증코드를 발송했습니다.");
                 // 발송이 완료되면 '인증' 버튼 비활성화 및 발송 완료
-                emailForm.disabled = true;
-                authButton.disabled = true;
-                authButton.textContent = '발송 완료';
+                authButton.textContent = '완료';
+                document.getElementById("auth-button").disabled = false;
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -146,9 +151,10 @@
     }
 
     function codeConfirm() {
-        const inputCode = document.getElementById("authCode").value;
-        const authButton = document.getElementById("auth-button");
-        const codeForm = document.getElementById('authCode');
+        const inputCode = document.getElementById("authCode").value;// 입력 코드
+        const authButton = document.getElementById("auth-button");  // 확인 버튼
+        const codeForm = document.getElementById('authCode');       // 코드 입력 폼
+        const emailForm = document.getElementById('emailForm');     // 메일 입력 폼
 
         fetch('/members/add/confirmCode', {
             method: "POST",
@@ -161,24 +167,37 @@
                 alert("인증코드가 다릅니다. 다시 입력해주세요.");
                 return;
             }
-            console.log(response);
             return response.json();
         })
             .then(data => {
-                if (data.right === false) {
-                    console.log("인증 실패");
+                //인증 실패
+                if (data.valid === false) {
                     alert("인증코드가 올바르지 않습니다.");
                     return;
                 }
-                codeForm.disabled = true;
-                authButton.disabled = true;
-                authButton.textContent = "인증 완료";
+
+                //인증 성공
                 alert("인증이 완료됐습니다.");
+
+                //입력 폼 숨기기
+                codeForm.hidden = true;
+                authButton.hidden = true;
+
+                // 인증 완료 메시지가 이미 있으면 중복 추가 방지
+                if (!document.getElementById('successMessage')) {
+                    const successMessage = document.createElement('div');
+                    successMessage.id = 'successMessage';
+                    successMessage.className = 'text-primary';
+                    successMessage.textContent = '인증이 완료됐습니다!';
+
+                    emailForm.appendChild(successMessage);
+                }
             })
             .catch(error => {
                 console.error("인증 실패: ", error.message);
             })
     }
+
 </script>
 </body>
 </html>
