@@ -72,6 +72,8 @@ public class MemberController {
             return "members/addMemberForm";
         }
 
+        //TODO 이메일 인증 포스팅 (2) 마저 수정하기
+
         Member member = new Member();
         member.setLoginId(form.getLoginId());
         member.setName(form.getName());

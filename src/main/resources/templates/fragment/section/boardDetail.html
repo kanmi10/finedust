@@ -41,7 +41,7 @@
                           th:text="${#temporals.format(board.createdDate, '작성일시: yyyy-MM-dd a hh:mm')}">2024년 11월 14일</span>
                 </li>
                 <li class="list-group-item">
-                    <p th:text="${board.content}" class="mt-2">
+                    <p style="white-space:pre-line;" th:text="${board.content}" class="mt-2">
                         서울 지역의 미세먼지 수치가 높은 상태입니다. 주의하시기 바랍니다.
                     </p>
                 </li>
