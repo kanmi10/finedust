@@ -42,16 +42,22 @@
 
 ## 💡 주요 기능
 
-|측정소명 자동 완성|북마크|
-|:---:|:---:|
-|<img src="https://github.com/user-attachments/assets/86802642-3f98-4169-8c1a-fb4f5d2dd9e5" width="480"/>|<img src="https://github.com/user-attachments/assets/85f74e5b-fbc3-4601-a7b2-9d68480cee59" width="480"/>|
-|검색 가능한 측정소명을 자동 완성|측정소를 북마크해 빠른 조회 가능<br>버튼을 통해 북마크 설정, 반복 클릭 시 해제|
+|측정소명 자동 완성|
+|:---:|
+|<img src="https://github.com/user-attachments/assets/86802642-3f98-4169-8c1a-fb4f5d2dd9e5" width="500"/>|
+|<div align="left">▪︎  검색 가능한 측정소명을 자동 완성</div>|
+
+
+|북마크|
+|:---:|
+|<img src="https://github.com/user-attachments/assets/85f74e5b-fbc3-4601-a7b2-9d68480cee59" width="500"/>|
+|<div align="left">▪︎  측정소를 북마크해 빠른 조회 가능<br>▪︎  버튼을 통해 북마크 설정, 반복 클릭 시 해제</div>|
 
 
 |이메일 인증 회원가입|
 |:---:|
 |<img src="https://github.com/user-attachments/assets/24980913-7196-4e0a-a211-06bd87db522a" width="500"/>|
-|- 회원가입 시 이메일 인증 필요<br>- 인증코드 입력 시 이메일 인증 통과|
+|<div align="left">▪︎  회원가입 시 이메일 인증 필요<br>▪︎  인증코드 입력 시 이메일 인증 통과</div>|
 
 <br>
 
