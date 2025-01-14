@@ -51,6 +51,9 @@ dependencies {
 
 	// 매일 인증 사용
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail'
+
+	//Spring Security 의존성 추가
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 }
 
 tasks.named('test') {

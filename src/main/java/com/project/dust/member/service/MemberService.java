@@ -5,6 +5,7 @@ import com.project.dust.member.Member;
 import com.project.dust.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -17,8 +18,11 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final DustRepository dustRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void join(Member member) {
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
         memberRepository.save(member);
     }
 
