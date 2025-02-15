@@ -141,10 +141,10 @@ public class MemberController {
         log.info("memberId={}", member.getId());
         Set<String> favorites = memberService.getFavorite(member.getId());
 
-
         response.put("success", true);
         response.put("favorites", favorites);
         log.info("favorites={}", favorites);
+
         return response;
     }
 
