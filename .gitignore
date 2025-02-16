@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### new add ###
+build.gradle
+application.properties
